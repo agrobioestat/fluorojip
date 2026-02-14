@@ -182,8 +182,8 @@ citation("fluorojip")
 
 Authors:
 - Joao Everthon da Silva Ribeiro  
+- Ronald Maldonado Rodriguez
 - Toshik Iarley da Silva  
-- Ronald Maldonado Rodriguez  
 
 ---
 
