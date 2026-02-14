@@ -6,10 +6,10 @@ Authors@R: c(
     person("Joao", "Everthon", "da Silva Ribeiro",
            email = "j.everthon@hotmail.com",
            role = c("aut", "cre")),
+    person("Ronald", "Maldonado", "Rodriguez",
+           role = "aut")    
     person("Toshik", "Iarley", "da Silva",
            role = "aut"),
-    person("Ronald", "Maldonado", "Rodriguez",
-           role = "aut")
   )
 Description: Compute chlorophyll a fluorescence OJIP / JIP-test parameters
     from raw fluorescence summary data (Fo, Fm, O-J-I-P steps, area).
