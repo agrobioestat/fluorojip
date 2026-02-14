@@ -1,0 +1,28 @@
+Package: fluorojip
+Type: Package
+Title: Compute Chlorophyll a Fluorescence OJIP Parameters
+Version: 0.1.1
+Authors@R: c(
+    person("Joao", "Everthon", "da Silva Ribeiro",
+           email = "j.everthon@hotmail.com",
+           role = c("aut", "cre")),
+    person("Toshik", "Iarley", "da Silva",
+           role = "aut"),
+    person("Ronald", "Maldonado", "Rodriguez",
+           role = "aut")
+  )
+Description: Compute chlorophyll a fluorescence OJIP / JIP-test parameters
+    from raw fluorescence summary data (Fo, Fm, O-J-I-P steps, area).
+    Includes standard PSII performance indices and fluxes per reaction center
+    and per cross section. Provides helpers to import Handy PEA exports and
+    tools for exploratory visualization (heatmaps and 3D plots).
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 4.1.0)
+Imports: stats, utils, graphics, grDevices
+LazyData: true
+Suggests: knitr, rmarkdown, scatterplot3d, testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

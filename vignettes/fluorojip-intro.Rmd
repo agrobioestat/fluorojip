@@ -1,0 +1,127 @@
+
+---
+title: "Introduction to fluorojip"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to fluorojip}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(fluorojip)
+```
+
+## Overview
+
+`fluorojip` computes **chlorophyll *a* fluorescence OJIP parameters** from raw fluorescence data.  
+The package focuses on **PSII performance** and **JIP-test indices**, following standard biophysical equations.
+
+This vignette presents a basic workflow to:
+
+1. Load raw OJIP fluorescence data (example dataset or Handy PEA files)
+2. Compute JIP-test parameters
+3. Visualize results using **heatmaps** and **3D surface plots**
+
+---
+
+## Example Dataset
+
+The package includes an example dataset containing typical fluorescence values recorded with a fluorometer.
+
+```{r}
+data(example_fluorojip)
+head(example_fluorojip)
+```
+
+---
+
+## Computing OJIP Parameters
+
+Use `calc_fluorojip()` to compute the full suite of JIP-test indices.  
+The function automatically handles intermediate variables such as  
+$V_j$, $V_i$, and $M_0$, ensuring scientific consistency.
+
+```{r}
+res <- calc_fluorojip(example_fluorojip)
+head(res)
+```
+
+### Key parameters calculated
+
+**Yields**
+- `phi_Po` ($F_v/F_m$)
+- `psi_Eo`
+- `phi_Eo`
+
+**Fluxes per reaction center (RC)**
+- `ABS_RC`
+- `TRo_RC`
+- `ETo_RC`
+- `DIo_RC`
+
+**Fluxes per cross section (CS)**
+- `ABS_CSm`
+- `TRo_CSm`
+- `ETo_CSm`
+- `DIo_CSm`
+
+**Performance**
+- `PI_abs` (Performance Index)
+
+---
+
+## Multivariate Visualization
+
+When many parameters and treatments are involved, `fluorojip` provides modern multivariate alternatives to traditional univariate charts.
+
+### Heatmaps
+
+Heatmaps allow simultaneous visualization of patterns across parameters and treatments.  
+Data are automatically scaled (Z-score) to make variables with different units comparable.
+
+```{r}
+# Selecting key parameters for visualization
+params <- c("phi_Po", "PI_abs", "ABS_RC", "DIo_RC", "ETo_CSm")
+
+plot_param_heatmap(
+  res,
+  group_col = "treatment",
+  params    = params,
+  scale     = "zscore",
+  main      = "JIP-Test Parameters Heatmap"
+)
+```
+
+### 3D Surface Plots
+
+3D surface plots help visualize the overall "data landscape", highlighting treatments
+with the strongest effects on PSII performance.
+
+```{r}
+plot_3d_fluorojip(res, params = c("Fv_Fm", "PI_abs", "area"))
+```
+
+---
+
+## Reading Handy PEA Data
+
+If your fluorescence data were exported directly from a **Handy PEA** fluorometer,
+you can use the built-in reader:
+
+```{r}
+# my_data <- read_handypea_csv("path/to/your_data.csv")
+# res_pea <- calc_fluorojip(my_data)
+```
+
+---
+
+## Summary
+
+The `fluorojip` workflow provides a **reproducible path** from raw fluorescence measurements
+to **publication-ready multivariate visualizations**, ensuring that all calculations strictly
+follow the standard JIP-test theory described in the current literature.
