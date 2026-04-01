@@ -1,0 +1,17 @@
+^renv$
+^renv\.lock$
+^fluorojip\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^R/\.Rhistory$
+^data-raw$
+^README\.Rmd$
+^doc$
+^Meta$
+^tools$
+^cran-comments\.md$
+^launch_fluorojip_app\.R$
+^.*\.Rcheck$
+^Rd2\.(pdf|tex|aux|idx|ilg|ind|log|out|toc)$
+^fluorojip-manual\.(pdf|tex|aux|idx|ilg|ind|log|out|toc)$

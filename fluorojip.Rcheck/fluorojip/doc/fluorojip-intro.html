@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Introduction to fluorojip</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to fluorojip</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><code>fluorojip</code> computes <strong>chlorophyll <em>a</em>
+fluorescence OJIP / JIP-test parameters</strong> from fluorescence
+summary data and supported exported trace tables.</p>
+<p>The package supports workflows based on <strong>summary fluorescence
+inputs</strong>, <strong>Biolyzer-exported CSV trace tables</strong>,
+and <strong>FluorPen Excel exports</strong>. It also provides tools for
+<strong>validation</strong>, <strong>normalization</strong>,
+<strong>exploratory visualization</strong>, and an interactive
+<strong>Shiny interface</strong> for data analysis.</p>
+<p>This vignette presents a basic workflow to:</p>
+<ol style="list-style-type: decimal">
+<li>Load fluorescence summary data</li>
+<li>Compute JIP-test parameters</li>
+<li>Visualize results using heatmaps and 3D plots</li>
+<li>Process supported Biolyzer-exported trace tables</li>
+<li>Work with FluorPen-oriented input files</li>
+<li>Launch the Shiny interface</li>
+</ol>
+<hr />
+</div>
+<div id="typical-workflow" class="section level2">
+<h2>Typical workflow</h2>
+<p>A typical <code>fluorojip</code> analysis follows these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Import a fluorescence summary table or a supported exported trace
+table</li>
+<li>Convert trace data to an OJIP summary, when needed</li>
+<li>Compute JIP-test parameters</li>
+<li>Validate selected outputs against bundled example files</li>
+<li>Visualize and export results</li>
+</ol>
+<hr />
+</div>
+<div id="example-dataset" class="section level2">
+<h2>Example dataset</h2>
+<p>The package includes an example dataset containing typical
+fluorescence summary values recorded with a fluorometer.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">data</span>(example_fluorojip)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">head</span>(example_fluorojip)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   sample_id treatment  t_fm  area  fo   k   j   i  fm   o   p   s</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; 1        A1   control 0.345 15000 100 130 220 400 600 100 600 545</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; 2        A2   control 0.352 15350 102 132 225 405 610 102 610 552</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; 3        A3   control 0.348 14920  98 129 218 395 598  98 598 540</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; 4        A4    stress 0.390 13100 110 165 400 480 580 110 580 530</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; 5        A5    stress 0.385 12850 108 160 390 470 575 108 575 522</span></span></code></pre></div>
+<hr />
+</div>
+<div id="computing-ojip-parameters" class="section level2">
+<h2>Computing OJIP parameters</h2>
+<p>Use <code>calc_fluorojip()</code> to compute the full suite of
+JIP-test indices. The function uses the measured K-step / 300 us
+fluorescence (<code>k</code>) to compute <span class="math inline">\(M_0\)</span> and, from there, the RC-based fluxes
+and <code>PI_abs</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">calc_fluorojip</span>(example_fluorojip)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">head</span>(res)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;   sample_id treatment  t_fm  area  fo   k   j   i  fm   o   p   s  Fv   phi_Po</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; 1        A1   control 0.345 15000 100 130 220 400 600 100 600 545 500 0.833333</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 2        A2   control 0.352 15350 102 132 225 405 610 102 610 552 508 0.832787</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 3        A3   control 0.348 14920  98 129 218 395 598  98 598 540 500 0.836120</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 4        A4    stress 0.390 13100 110 165 400 480 580 110 580 530 470 0.810345</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 5        A5    stress 0.385 12850 108 160 390 470 575 108 575 522 467 0.812174</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt;      Fv_Fm       Vj       Vi       Mo       Sm        N   ABS_RC   TRo_RC</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; 1 0.833333 0.240000 0.600000 0.240000 30.00000 30.00000 1.200000 1.000000</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; 2 0.832787 0.242126 0.596457 0.236220 30.21654 29.47955 1.171500 0.975610</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; 3 0.836120 0.240000 0.594000 0.248000 29.84000 30.83467 1.235867 1.033333</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; 4 0.810345 0.617021 0.787234 0.468085 27.87234 21.14453 0.936170 0.758621</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; 5 0.812174 0.603854 0.775161 0.445396 27.51606 20.29553 0.908166 0.737589</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;     ETo_RC   DIo_RC   phi_Eo   psi_Eo ABS_CSm TRo_CSm ETo_CSm DIo_CSm    PI_abs</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; 1 0.760000 0.200000 0.633333 0.760000     600     500     380     100 13.194444</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; 2 0.739389 0.195890 0.631148 0.757874     610     508     385     102 13.306900</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; 3 0.785333 0.202533 0.635452 0.760000     598     500     380      98 13.072982</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; 4 0.290536 0.177550 0.310345 0.382979     580     470     180     110  2.832858</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; 5 0.292193 0.170577 0.321739 0.396146     575     467     185     108  3.123565</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt;   Kn Kp</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; 1 NA NA</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; 2 NA NA</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; 3 NA NA</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; 4 NA NA</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; 5 NA NA</span></span></code></pre></div>
+<div id="key-parameters-calculated" class="section level3">
+<h3>Key parameters calculated</h3>
+<p><strong>Yields</strong> - <code>phi_Po</code> (<span class="math inline">\(F_v/F_m\)</span>) - <code>psi_Eo</code> -
+<code>phi_Eo</code></p>
+<p><strong>Fluxes per reaction center (RC)</strong> -
+<code>ABS_RC</code> - <code>TRo_RC</code> - <code>ETo_RC</code> -
+<code>DIo_RC</code></p>
+<p><strong>Fluxes per cross section (CS)</strong> - <code>ABS_CSm</code>
+- <code>TRo_CSm</code> - <code>ETo_CSm</code> - <code>DIo_CSm</code></p>
+<p><strong>Performance</strong> - <code>PI_abs</code> (Performance
+Index, PI(Abs))</p>
+<hr />
+</div>
+</div>
+<div id="multivariate-visualization" class="section level2">
+<h2>Multivariate visualization</h2>
+<p>When many parameters and treatments are involved,
+<code>fluorojip</code> provides multivariate alternatives to traditional
+univariate charts.</p>
+<div id="heatmaps" class="section level3">
+<h3>Heatmaps</h3>
+<p>Heatmaps allow simultaneous visualization of patterns across
+parameters and treatments. Data can be scaled to make variables with
+different units comparable.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;phi_Po&quot;</span>, <span class="st">&quot;PI_abs&quot;</span>, <span class="st">&quot;ABS_RC&quot;</span>, <span class="st">&quot;DIo_RC&quot;</span>, <span class="st">&quot;ETo_CSm&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">plot_param_heatmap</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  res,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">group_col =</span> <span class="st">&quot;treatment&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">params    =</span> params,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">scale     =</span> <span class="st">&quot;zscore&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">main      =</span> <span class="st">&quot;JIP-Test Parameters Heatmap&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="d-plots" class="section level3">
+<h3>3D plots</h3>
+<p>3D plots help visualize the overall multivariate structure of the
+data, highlighting treatments associated with stronger effects on PSII
+performance.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">plot_3d_fluorojip</span>(res, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&quot;Fv_Fm&quot;</span>, <span class="st">&quot;PI_abs&quot;</span>, <span class="st">&quot;area&quot;</span>))</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAABOFBMVEUAAAAAACoAADoAAEkAAGYAF2YAKAAAKIEAOjoAOmYAOpAAWLYAZpAAZrYA//8NAAANAFgXABcgIQAoAAAoAA0qAAAqkNs6AAA6ACg6ADo6AGY6OgA6Ojo6OmY6OpA6ZmY6ZpA6ZrY6e3w6fHs6kLY6kNtJAABRvP9mAABmADpmAGZmOgBmOjpmWABmZmZmkLZmkNtmtrZmtttmtv9m2/98ezqBKACBZgCQMgCQOgCQOjqQZjqQkGaQkLaQtpCQttuQvJCQ27aQ29uQ2/+cOgCdkDq2SQC2WAC2ZgC2Zjq2ZpC2kGa225C227a229u22/+2/7a2/9u2//++vr7bkDrbkGbbtmbbtpDbtrbb27bb29vb/7bb////AAD/nTr/tmb/vFH/22b/25D/27b//4H//7b//9v////lvf+jAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAODUlEQVR4nO2da2MjNxWGRVigSXG4FAjdC3QBg8O2tF1DIWxht4SLYaFbqMmy1MGQ1J7//w/Q0X1GozmSRhNPkvN+sBONdCQ91kg60lxYReoU23UBxi4ChIgAISJAiAgQIgKEiAAhIkCICBAiAoSIACEiQIgIECIChIgAISJAiAgQIgKEiAAhIkCICBAiAoSIACEiQIgIECIChIgAISJAiAgQIgKEiAAhIkCIOgBdPmFs790V/2vJhPbeeuEc3p7d52EPnq5MyJqxebU9YQcrnYI9MCn8kDxt//KPrqPP7zXL2VNhQJuZqNCkspVje3N7+JEK2zcFbgHE9k7VQT8kS5eP7nQA4pk3y9lXYUC8Ro/hY+5UztZOF4XrQLehNkDmqB+SpQXrAmQy6YqUpiCg7fP7vCYXRxKQyPDVI9mgVFH2HvOavjxibKrCaoBEisuZQVoPeQnt78GpCN/77SN254UN4k138vIeN1/984jti+TbP/PsHq6Aj6y9CbDpQQtIVV2eiJ+Vs/zb27yFi0M2w6o646fha49rdjMASUoLUR1VOSi6+vk5BlVzjlA3CR8QFL8OSIasbXtcqlZlg9S5zdg93RZUCD+ZFSAbYNIrQCITXqapgqlycTLU4VPXbiYgbnb/1Kmc/QN+ZRXJNnof0KuZOeiG8DhfXalq8AoevKj+7QRBsafVGVOnuKgqbyG61mDGCVDpdSZ8WPnYFAxinUGrdzPkpfzR6lIUzDGTBwh+nYd1QLbdTE0k3UiS+qBXMN5MKtXLVU6QbKfyUxOb6lIIQG6Ak970jPtiaF3II/oH1BnK/5dvfVwzkwdIdDHTXoDaR7HtE/n3xCa3QbJ1yk+RD/8wSUX13IBlfVg8u2fOGkVGRLDWZfl0JRqFTAckc/EB1U6xMCBnRuKGwA+9/5tXMweQE+QBWrMGIDdg2aze9tWHR05TEaVyrPM/dcldM2UAceOKVKOTlmVp6aSt3BDZ/jYuICeorQWZs0i3oLm1a6tn2vXCnI0ygmO93oLw+VIQ0OXbR1ORlTNon3jD/PZMDPOiL5XQYgAJkqaTFRV0gjxATnM1fdDE2rWAePjee3LuIQCZPsjNUP2YD57WzKQDktU9Y2qkaDZGZ6LodAowQ4lrQQcrhdu2IB3kAZLTm8uZNAzRvQD7szHTuzmjmJshh/VwtRVTJcdMOiBdaUjc7WpAN6PmFvMqCpChW++DQp20nq/oCY2ZB8l5lAPIWJFzAfdXMxnq8EnNbgYgfpJ1O6sv+XF2/7Ggv31+BI5rFQdIDCr7T9UwbUcxGeQD4n4zNy9yh7kv/0lsQL2T3opR7LV35TB/5+9PdDKboZpJv1fV7OYAuu7qdttiRYAQESBEBAjRDQZURgQIEQFCRIAQESBEBAgRAUJEgBARIEQECBEBQkSAEBEgRAQIEQFCRIAQESBEBAgRAUJEgBARIEQECBEBQkSAEBEgRAQIEQFCNEJArLz6lKZYvYqpfJEI0IAWCdCAadMzG7zHCOS7o7TJecVldlsBcTwECMmIACH5ECAkGwKE5EKAAnnoTAgQkgUBQnIgQEgGBMg3X7M/KKB18/bKzUyHjBcQ6/w3JtH5+XlcVhaHHzJaQE3j6YDOz2MJXUdAnu1kQOfnPqGlvJ1S3Jwpbtd8f8bYHG4gPfjs+EN91/h0/IBafPcSgJbi6R5wM/2cf8MdrnDz/N4p4NjM4A5be2TUgNoMFwAEbEDbE/heA5gp3No6l4CmtSNjBtRqt0AfxFE43woMNBYJaN48kpAvXpqCajdbYBS7eFM/8AFqr8C0ANJHEvKNKE0xBawWmAfdiBYUXFotAKilD2oAGn8fFDZZYia9FM8HmdTHKgFoqsatsY9iHRaLuBrePEgCgsewfCaRjHse1GWQnFVkZ+d2AbIPk4u2dqsALfST+ZxnFGHGbhOgzbF6KM3FXfP8B9TW7QYUsbF8mwCZU0ufajGGbhUg/ViqaYKdkoC8FdbeFsunTTZTMJa/gNg73/Jpk61kADo8PGyNdH0A8U46+pKndECHh01C4uF8tRXWpTrR5RH7nZpvnzIXMpEM6PCwSUgsZnB31K6wgvd6cTQ1R/R3Vglzy9xloLyscR/Q2jyvWa2wyvUPHqyPrP0Hc+22BSVYKNCCNjP97G+1/LNWD/Kc2yMeoZsLqKUPEg/VnDuAVLOb6yPmO6uImWX29fkb5oyIf9RcqVFsoXd5TAtyjtS+U/KNKE2CNsfvTNbylRKlM8NjuSus9fFe/1cP3Q2g3518U6yOD9uCmhINRm2HSQpL8XjgvVN9RH8n59unzL64s7o92QEg0efIJybrFVaYB6nnfZsHBtcf8LsTQHysWO7qFEvVbkaxjXiFyOKAAJWzQICKRL0CQNDFL+PeMtTfWb3iTjpHnsXFweriaFJbTx+uNNewBcH8ANzZFretfGlS7u8aE6AFLJQMCkjvi13DFsTPLVgqgQ384Upj9sWuIyAxRYFLIIYrjd32uY6d9BWk5c6qPMV+SIDa9cGX5Cn2AYt/ZeF4AIl3skS9bLGlNPoVep1d/Ob4FzLWD8q3oCEXcaXkkvUy5oWdLWXm3e9yYi4GDGjAPmjAqEryKj070KRZF1dpw+t5ulObrefip9iAUZX0clreRBFSwxUJzmUbrdJbzzuvdU4Lkr8u0gYC1qH9wQmEAQpbGG9UrTVTV8JmWYcJ+GIahTdgYbRRQeY1rtg4FLa+EC9Bi3wxznXspFM0Qm9+wKgZGqE3P2BUraipXti6eEnuouv9vqDBvPkBo2pFTfWC1nnnvoS1gG5Cw3nzBaMGRuLIqV7AOgzzkLJ7NelazKRbrmNQ4XFTvXbrkBoAdU8zP//WT+QWXXlvvljUJft+O4GUqV64BXU7Kpsfv16Jvfnfj9fV+NcqRCBhqhfsg5bd70Ee0JsvGDXYROKneoFRDHl9be7e/EAKZhjrLnWVOTNdzt68H/PTYABDY4StWuGAtr9G/LH2PihGqXvz/g/9abOyTgBDY4SsOi99r/77NWzdMANQ0hXIrRYio3U2DobGCGa+sFum//niAC0oahmp20JUrO7aMzRGKG93/P7T1+Gt4V1nRFYLil8LqGI76VQ+kCCz+wE4ahqL1j6vBSUqwkJa9yOTZHU/IAfQ5vgeNhoPDyjCm+eVTRaeJpSxAwge07D5aWcLzwEUuRYQ7c0nn14Q0EwUP7o7gEDOn23KARS3FhDrzWecXhDAumN0jO4whf2V/XXLA4pbC4j15rOaTzNd2ui+mCy+PBF/wnh88b14X7FNuds+kXvzuXxqCRNHd+FkXdz95VRsTfV953z2tk94b965eyCbj5syeXRv9EIN9d/ViFoLCHvz9v6TzO6nXq6M0b0bUKJyt32CfZC9gylndMeH+ZjRfWhAURK9IC9Gc2/eAMo/vZxyZY3uGCDYNI/2N/MnioG9eQ2oHx/tzTdjtBRXDe9ARDnvSA8q7+GMJdRvJg1FaVoQfBhr3ugV3/2YcsV1P3p45x9//Eo9qFVyOSd2Y30IXwz4eLcKJjWfqt1ZbS2raS4wOn1H+u6dPah6TFXs8N8bUNtEkXk3m6by4SYiu5805726ekAtFph3N24yHz4E4vkIpTnv1dUD8oZdBiO0AlRumA8uGqQ579XuW5D612lA6c2najqrgWLygXSS5rxXOwdk/uvHJ2TVlfK8kpz3qsgFVDEK3Bbec/ZjA2qG2ocvtfFe1nn3lL0v1nZbeB/nqxHQabWqnI33ss67p3xA/m3hxZpPzVaghHbjvajr5SkfkLf1XJKPNYbvK48UUHPrmfVy3kPDfNfO+7gBya3nj47fUVvPRZuPsRce3avxAwIZZ7U0n5BVkAHz5rdjnPeeKgOoOJ+AVZGnvq7u4rv6dpG4+5fzVMJZLTi6O+UKdD72urqLN2Kc974qMJMu33zarUrZ4T3Oee+rEs7qMArmqAHFOe+969crNZRVWBCP7Vu5IXIlVH46UZyAQAzPRlum4jvKee+rXoDsdcjrSTNE9pxO/7me2OCuGJ4No8bwLuIONrxr5U8Uax6xukjJ9qBy7P3EGYFFFGdIDsTwbHhN5HoAgp/X7y+bDtKz5nqotznjxcCdLH14EOfdUz4g2B3w+8sgIBmlC5AxEgNoMZDz7ql/Jy2+TX8ZBCSj/LUDkDFyNT5EpDIB+f0lD3m9civ3B8a+8OxuYz30WQcgGeP0ZgBS+t83fm7+llWxJ12zCxaBH3V10lUD0LBOVqTKALL9palQcxBXUTqGeWOkYWO3KgCo1l+aHlQ6SMpNslGcgEAMz8Zu1d8Xu+EiQIgIECIChIgAISJAiAgQIgKEiAAhIkCICBAiAoSIACEiQIgIECIChIgAISJAiAgQIgKEiAAhIkCICBAiAoSIACEiQIgIEKJBAKlHC7XcvR8+MlYNAyh4U3rMixrGJQKEaFBA8gEQ7ssHDKCLo/dnjE3h0uhxn26DApLvr3BbjQOIY1uyyLeg7VDDnmJLcYXUtOUIvCFef4y6CQ05ism3Mdde72GOCCz2Y7wauJOGqwzdftlpQQQItL7zSe3ZuQRIyALazH5W64MJkJBzVi3YpPUIAVJa16c5BOjGiQAhugpA4E8IDX+HaXlRC0JEgBARIEQECBEBQkSAEBEgRAQIEQFCRIAQESBEBAgRAUJEgBARIEQECBEBQkSAEBEgRAQIEQFCRIAQESBEBAgRAUJEgBARIEQECBEBQkSAEBEgRAQIEQFCRIAQESBEBAgRAUJEgBARIEQECBEBQkSAEBEgRAQIEQFCRIAQESBEBAgRAUJEgBD9H21yknqpeacOAAAAAElFTkSuQmCC" /><!-- --></p>
+<hr />
+</div>
+</div>
+<div id="biolyzer-export-workflow" class="section level2">
+<h2>Biolyzer export workflow</h2>
+<p>If you have a supported <strong>Biolyzer-exported CSV trace
+table</strong>, you can process it and then compute JIP-test
+indices.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># raw  &lt;- read_handypea_csv(&quot;path/to/biolyzer_export.csv&quot;)</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># ojip &lt;- handypea_to_ojip(raw)</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># res_biolyzer &lt;- calc_fluorojip(ojip)</span></span></code></pre></div>
+<p>Although some helper function names retain the historical
+<code>handypea</code> prefix for backward compatibility, the supported
+import workflow is based on <strong>Biolyzer-exported trace
+tables</strong>, not direct parsing of proprietary raw instrument
+files.</p>
+<hr />
+</div>
+<div id="fluorpen-workflow" class="section level2">
+<h2>FluorPen workflow</h2>
+<p><code>fluorojip</code> can also process <strong>FluorPen Excel
+exports</strong> after the relevant summary values are organized in the
+expected format.</p>
+<p>A typical workflow is:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># fluorpen_data &lt;- read_excel(&quot;path/to/fluorpen_export.xlsx&quot;)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co"># res_fluorpen  &lt;- calc_fluorojip(fluorpen_data)</span></span></code></pre></div>
+<p>Bundled FluorPen-oriented examples can be used to check whether the
+computed outputs match expected JIP-test values.</p>
+<hr />
+</div>
+<div id="validation-resources" class="section level2">
+<h2>Validation resources</h2>
+<p>The package includes bundled example files that can be used in
+validation-oriented workflows, including vendor-related examples from
+<strong>Biolyzer</strong> and <strong>FluorPen</strong>.</p>
+<p>These resources are useful for checking whether calculated parameters
+such as <code>PI_abs</code> and related indices agree with expected
+reference outputs.</p>
+<hr />
+</div>
+<div id="shiny-interface" class="section level2">
+<h2>Shiny interface</h2>
+<p>For interactive analysis, <code>fluorojip</code> also provides a
+<strong>Shiny application</strong> for data import, parameter
+calculation, visualization, normalization, and export.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># run_fluorojip_app()</span></span></code></pre></div>
+<p>This interface is useful for exploratory analyses and for users who
+prefer not to work directly with scripts.</p>
+<hr />
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>The <code>fluorojip</code> workflow provides a reproducible path from
+fluorescence summary data or supported exported trace tables to JIP-test
+calculation, validation, visualization, and interactive exploration.</p>
+<p>The package is designed to support PSII performance analysis through
+a coherent workflow that combines parameter computation, supported
+import helpers, bundled validation files, and publication-oriented
+exploratory graphics.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>The scientific background of the implemented OJIP / JIP-test
+parameters is primarily based on the following references:</p>
+<p>Ripoll, J., Bertin, N., Bidel, L. P. R., &amp; Urban, L. (2016). A
+user’s view of the parameters derived from the induction curves of
+maximal chlorophyll <em>a</em> fluorescence: Perspectives for analyzing
+stress. <em>Frontiers in Plant Science</em>, 7, Article 1679. <a href="https://doi.org/10.3389/fpls.2016.01679" class="uri">https://doi.org/10.3389/fpls.2016.01679</a></p>
+<p>Stirbet, A., &amp; Govindjee. (2011). On the relation between the
+Kautsky effect (chlorophyll <em>a</em> fluorescence induction) and
+photosystem II: Basics and applications of the OJIP fluorescence
+transient. <em>Journal of Photochemistry and Photobiology B:
+Biology</em>, 104(1-2), 236-257. <a href="https://doi.org/10.1016/j.jphotobiol.2010.12.010" class="uri">https://doi.org/10.1016/j.jphotobiol.2010.12.010</a></p>
+<p>Strasser, R. J., Srivastava, A., &amp; Govindjee. (1995). Polyphasic
+chlorophyll <em>a</em> fluorescence transient in plants and
+cyanobacteria. <em>Photochemistry and Photobiology</em>, 61(1), 32-42.
+<a href="https://doi.org/10.1111/j.1751-1097.1995.tb09240.x" class="uri">https://doi.org/10.1111/j.1751-1097.1995.tb09240.x</a></p>
+<p>Strasser, R. J., Tsimilli-Michael, M., &amp; Srivastava, A. (2004).
+Analysis of the chlorophyll <em>a</em> fluorescence transient. In G. C.
+Papageorgiou &amp; Govindjee (Eds.), <em>Chlorophyll a fluorescence: A
+signature of photosynthesis</em> (pp. 321-362). Springer. <a href="https://doi.org/10.1007/978-1-4020-3218-9_12" class="uri">https://doi.org/10.1007/978-1-4020-3218-9_12</a></p>
+<p>The package also builds on the R ecosystem and several supporting
+packages:</p>
+<p>R Core Team. (2025). <em>R: A language and environment for
+statistical computing</em> [Computer software]. R Foundation for
+Statistical Computing. <a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a></p>
+<p>Wickham, H., &amp; Bryan, J. (2025). <em>readxl: Read Excel
+files</em> [Computer software]. CRAN. <a href="https://CRAN.R-project.org/package=readxl" class="uri">https://CRAN.R-project.org/package=readxl</a></p>
+<p>Chang, W., Cheng, J., Allaire, J. J., Sievert, C., Schloerke, B.,
+Aden-Buie, G., Xie, Y., Allen, J., McPherson, J., Dipert, A., &amp;
+Borges, B. (2026). <em>shiny: Web application framework for R</em>
+[Computer software]. CRAN. <a href="https://CRAN.R-project.org/package=shiny" class="uri">https://CRAN.R-project.org/package=shiny</a></p>
+<p>Ligges, U., Maechler, M., &amp; Schnackenberg, S. (2026).
+<em>scatterplot3d: 3D scatter plot</em> [Computer software]. CRAN. <a href="https://CRAN.R-project.org/package=scatterplot3d" class="uri">https://CRAN.R-project.org/package=scatterplot3d</a></p>
+<p>Allaire, J. J., Xie, Y., Dervieux, C., McPherson, J., Luraschi, J.,
+Ushey, K., Atkins, A., Wickham, H., Cheng, J., Chang, W., &amp; Iannone,
+R. (2025). <em>rmarkdown: Dynamic documents for R</em> [Computer
+software]. CRAN. <a href="https://CRAN.R-project.org/package=rmarkdown" class="uri">https://CRAN.R-project.org/package=rmarkdown</a></p>
+<p>Wickham, H. (2026). <em>testthat: Unit testing for R</em> [Computer
+software]. CRAN. <a href="https://CRAN.R-project.org/package=testthat" class="uri">https://CRAN.R-project.org/package=testthat</a></p>
+<p>For broader perspectives on reproducibility in computational
+research, see:</p>
+<p>Peng, R. D. (2011). Reproducible research in computational science.
+<em>Science</em>, 334(6060), 1226-1227. <a href="https://doi.org/10.1126/science.1213847" class="uri">https://doi.org/10.1126/science.1213847</a></p>
+<p>Sandve, G. K., Nekrutenko, A., Taylor, J., &amp; Hovig, E. (2013).
+Ten simple rules for reproducible computational research. <em>PLoS
+Computational Biology</em>, 9(10), e1003285. <a href="https://doi.org/10.1371/journal.pcbi.1003285" class="uri">https://doi.org/10.1371/journal.pcbi.1003285</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

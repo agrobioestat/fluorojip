@@ -1,0 +1,221 @@
+Hmm ... looks like a package
+Converting parsed Rd's to LaTeX .
+Creating pdf output from LaTeX ...
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file Rd2.aux.
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+No file Rd2.toc.
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd) [1{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}] [2]
+Overfull \hbox (49.37894pt too wide) in paragraph at lines 115--117
+[]\T1/ptm/m/n/10 This is a con-ve-nience wrap-per for summary-input work-flows: []\T1/zi4/m/n/10 read.csv(file, ...) -> calc_fluorojip(df)[]\T1/ptm/m/n/10 . 
+[3] [4]
+Overfull \hbox (10.0578pt too wide) in paragraph at lines 215--219
+[]\T1/ptm/m/n/10 Returns the full path to the ex-am-ple Bi-olyzer work-book dis-tributed with the pack-age in []\T1/zi4/m/n/10 inst/extdata[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 258--260
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (8.30685pt too wide) in paragraph at lines 263--265
+[]\T1/ptm/m/n/10 A data frame con-tain-ing one row per sam-ple with OJIP sum-mary val-ues ready for [][][]\T1/zi4/m/n/10 calc_fluorojip()[][][][]\T1/ptm/m/n/10 . 
+[5]
+Overfull \hbox (11.42029pt too wide) in paragraph at lines 314--314
+ []  \T1/zi4/m/n/10 normalize = c("none", "zscore", "minmax", "control_ratio", "control_then_zscore"),[] 
+[6]
+Overfull \hbox (6.9698pt too wide) in paragraph at lines 333--336
+[]\T1/ptm/m/n/10 Normalization method. One of []\T1/zi4/m/n/10 "none"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "zscore"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "minmax"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "control_ratio"[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (6.91847pt too wide) in paragraph at lines 352--356
+\T1/ptm/m/n/10 equivalent in-put (for ex-am-ple, []\T1/zi4/m/n/10 k []\T1/ptm/m/n/10 or []\T1/zi4/m/n/10 f300us[]\T1/ptm/m/n/10 ) in the orig-i-nal sum-mary data used by []\T1/zi4/m/n/10 calc_fluorojip()[]\T1/ptm/m/n/10 . 
+[7]
+Overfull \hbox (2.32988pt too wide) in paragraph at lines 415--419
+[]\T1/zi4/m/n/10 plot_param_3d() []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 plot_param_surface3d() []\T1/ptm/m/n/10 are aliases of []\T1/zi4/m/n/10 plot_3d_fluorojip()[]\T1/ptm/m/n/10 . The name
+[8]
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 501--503
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd) [9] [10] [11]
+No file Rd2.ind.
+[12] (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.shiny::runApp\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::heatmap\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.scatterplot3d::scatterplot3d\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.utils::read.csv\(\)} has been referenced but does not exist, replaced by a fixed one
+
+<c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (12 pages, 99328 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.18 [TeX Live 2026] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (26 entries accepted, 0 rejected).
+Sorting entries....done (125 comparisons).
+Generating output file Rd2.ind....done (65 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd) (./Rd2.toc (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd) [1{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}]) [2]
+Overfull \hbox (49.37894pt too wide) in paragraph at lines 115--117
+[]\T1/ptm/m/n/10 This is a con-ve-nience wrap-per for summary-input work-flows: []\T1/zi4/m/n/10 read.csv(file, ...) -> calc_fluorojip(df)[]\T1/ptm/m/n/10 . 
+[3] [4]
+Overfull \hbox (10.0578pt too wide) in paragraph at lines 215--219
+[]\T1/ptm/m/n/10 Returns the full path to the ex-am-ple Bi-olyzer work-book dis-tributed with the pack-age in []\T1/zi4/m/n/10 inst/extdata[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 258--260
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (8.30685pt too wide) in paragraph at lines 263--265
+[]\T1/ptm/m/n/10 A data frame con-tain-ing one row per sam-ple with OJIP sum-mary val-ues ready for [][][]\T1/zi4/m/n/10 calc_fluorojip()[][][][]\T1/ptm/m/n/10 . 
+[5]
+Overfull \hbox (11.42029pt too wide) in paragraph at lines 314--314
+ []  \T1/zi4/m/n/10 normalize = c("none", "zscore", "minmax", "control_ratio", "control_then_zscore"),[] 
+[6]
+Overfull \hbox (6.9698pt too wide) in paragraph at lines 333--336
+[]\T1/ptm/m/n/10 Normalization method. One of []\T1/zi4/m/n/10 "none"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "zscore"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "minmax"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "control_ratio"[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (6.91847pt too wide) in paragraph at lines 352--356
+\T1/ptm/m/n/10 equivalent in-put (for ex-am-ple, []\T1/zi4/m/n/10 k []\T1/ptm/m/n/10 or []\T1/zi4/m/n/10 f300us[]\T1/ptm/m/n/10 ) in the orig-i-nal sum-mary data used by []\T1/zi4/m/n/10 calc_fluorojip()[]\T1/ptm/m/n/10 . 
+[7]
+Overfull \hbox (2.32988pt too wide) in paragraph at lines 415--419
+[]\T1/zi4/m/n/10 plot_param_3d() []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 plot_param_surface3d() []\T1/ptm/m/n/10 are aliases of []\T1/zi4/m/n/10 plot_3d_fluorojip()[]\T1/ptm/m/n/10 . The name
+[8]
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 501--503
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd) [9] [10] [11] (./Rd2.ind [12]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 35.
+
+[13]) (./Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.shiny::runApp\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::heatmap\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.scatterplot3d::scatterplot3d\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.utils::read.csv\(\)} has been referenced but does not exist, replaced by a fixed one
+
+<c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (13 pages, 111790 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.18 [TeX Live 2026] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (26 entries accepted, 0 rejected).
+Sorting entries....done (125 comparisons).
+Generating output file Rd2.ind....done (65 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd) (./Rd2.toc (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd) [1{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}]) [2]
+Overfull \hbox (49.37894pt too wide) in paragraph at lines 115--117
+[]\T1/ptm/m/n/10 This is a con-ve-nience wrap-per for summary-input work-flows: []\T1/zi4/m/n/10 read.csv(file, ...) -> calc_fluorojip(df)[]\T1/ptm/m/n/10 . 
+[3] [4]
+Overfull \hbox (10.0578pt too wide) in paragraph at lines 215--219
+[]\T1/ptm/m/n/10 Returns the full path to the ex-am-ple Bi-olyzer work-book dis-tributed with the pack-age in []\T1/zi4/m/n/10 inst/extdata[]\T1/ptm/m/n/10 .
+
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 258--260
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (8.30685pt too wide) in paragraph at lines 263--265
+[]\T1/ptm/m/n/10 A data frame con-tain-ing one row per sam-ple with OJIP sum-mary val-ues ready for [][][]\T1/zi4/m/n/10 calc_fluorojip()[][][][]\T1/ptm/m/n/10 . 
+[5]
+Overfull \hbox (11.42029pt too wide) in paragraph at lines 314--314
+ []  \T1/zi4/m/n/10 normalize = c("none", "zscore", "minmax", "control_ratio", "control_then_zscore"),[] 
+[6]
+Overfull \hbox (6.9698pt too wide) in paragraph at lines 333--336
+[]\T1/ptm/m/n/10 Normalization method. One of []\T1/zi4/m/n/10 "none"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "zscore"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "minmax"[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 "control_ratio"[]\T1/ptm/m/n/10 ,
+
+Overfull \hbox (6.91847pt too wide) in paragraph at lines 352--356
+\T1/ptm/m/n/10 equivalent in-put (for ex-am-ple, []\T1/zi4/m/n/10 k []\T1/ptm/m/n/10 or []\T1/zi4/m/n/10 f300us[]\T1/ptm/m/n/10 ) in the orig-i-nal sum-mary data used by []\T1/zi4/m/n/10 calc_fluorojip()[]\T1/ptm/m/n/10 . 
+[7]
+Overfull \hbox (2.32988pt too wide) in paragraph at lines 415--419
+[]\T1/zi4/m/n/10 plot_param_3d() []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 plot_param_surface3d() []\T1/ptm/m/n/10 are aliases of []\T1/zi4/m/n/10 plot_3d_fluorojip()[]\T1/ptm/m/n/10 . The name
+[8]
+Overfull \hbox (52.6494pt too wide) in paragraph at lines 501--503
+[]\T1/ptm/m/n/10 A typ-i-cal work-flow is: []\T1/zi4/m/n/10 read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)[]\T1/ptm/m/n/10 . 
+(c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd) [9] [10] [11] (./Rd2.ind [12]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 35.
+
+[13]) (./Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.shiny::runApp\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::heatmap\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.scatterplot3d::scatterplot3d\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.utils::read.csv\(\)} has been referenced but does not exist, replaced by a fixed one
+
+<c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/Users/Everthon/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (13 pages, 112694 bytes).
+Transcript written on Rd2.log.
+Saving output to 'fluorojip-manual.pdf' ...
+Done
+You may want to clean up by 'rm -Rf C:/Users/Everthon/AppData/Local/Temp/RtmpWusPze/Rd2pdf34586659f8e'

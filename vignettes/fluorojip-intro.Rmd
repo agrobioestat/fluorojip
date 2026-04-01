@@ -1,0 +1,263 @@
+---
+title: "Introduction to fluorojip"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to fluorojip}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(fluorojip)
+```
+
+## Overview
+
+`fluorojip` computes **chlorophyll *a* fluorescence OJIP / JIP-test parameters**
+from fluorescence summary data and supported exported trace tables.
+
+The package supports workflows based on **summary fluorescence inputs**,
+**Biolyzer-exported CSV trace tables**, and **FluorPen Excel exports**.
+It also provides tools for **validation**, **normalization**,
+**exploratory visualization**, and an interactive **Shiny interface** for data analysis.
+
+This vignette presents a basic workflow to:
+
+1. Load fluorescence summary data
+2. Compute JIP-test parameters
+3. Visualize results using heatmaps and 3D plots
+4. Process supported Biolyzer-exported trace tables
+5. Work with FluorPen-oriented input files
+6. Launch the Shiny interface
+
+---
+
+## Typical workflow
+
+A typical `fluorojip` analysis follows these steps:
+
+1. Import a fluorescence summary table or a supported exported trace table
+2. Convert trace data to an OJIP summary, when needed
+3. Compute JIP-test parameters
+4. Validate selected outputs against bundled example files
+5. Visualize and export results
+
+---
+
+## Example dataset
+
+The package includes an example dataset containing typical fluorescence summary values
+recorded with a fluorometer.
+
+```{r}
+data(example_fluorojip)
+head(example_fluorojip)
+```
+
+---
+
+## Computing OJIP parameters
+
+Use `calc_fluorojip()` to compute the full suite of JIP-test indices.
+The function uses the measured K-step / 300 us fluorescence (`k`) to compute
+$M_0$ and, from there, the RC-based fluxes and `PI_abs`.
+
+```{r}
+res <- calc_fluorojip(example_fluorojip)
+head(res)
+```
+
+### Key parameters calculated
+
+**Yields**
+- `phi_Po` ($F_v/F_m$)
+- `psi_Eo`
+- `phi_Eo`
+
+**Fluxes per reaction center (RC)**
+- `ABS_RC`
+- `TRo_RC`
+- `ETo_RC`
+- `DIo_RC`
+
+**Fluxes per cross section (CS)**
+- `ABS_CSm`
+- `TRo_CSm`
+- `ETo_CSm`
+- `DIo_CSm`
+
+**Performance**
+- `PI_abs` (Performance Index, PI(Abs))
+
+---
+
+## Multivariate visualization
+
+When many parameters and treatments are involved, `fluorojip` provides
+multivariate alternatives to traditional univariate charts.
+
+### Heatmaps
+
+Heatmaps allow simultaneous visualization of patterns across parameters and treatments.
+Data can be scaled to make variables with different units comparable.
+
+```{r}
+params <- c("phi_Po", "PI_abs", "ABS_RC", "DIo_RC", "ETo_CSm")
+
+plot_param_heatmap(
+  res,
+  group_col = "treatment",
+  params    = params,
+  scale     = "zscore",
+  main      = "JIP-Test Parameters Heatmap"
+)
+```
+
+### 3D plots
+
+3D plots help visualize the overall multivariate structure of the data,
+highlighting treatments associated with stronger effects on PSII performance.
+
+```{r}
+plot_3d_fluorojip(res, params = c("Fv_Fm", "PI_abs", "area"))
+```
+
+---
+
+## Biolyzer export workflow
+
+If you have a supported **Biolyzer-exported CSV trace table**, you can process it
+and then compute JIP-test indices.
+
+```{r}
+# raw  <- read_handypea_csv("path/to/biolyzer_export.csv")
+# ojip <- handypea_to_ojip(raw)
+# res_biolyzer <- calc_fluorojip(ojip)
+```
+
+Although some helper function names retain the historical `handypea` prefix for
+backward compatibility, the supported import workflow is based on
+**Biolyzer-exported trace tables**, not direct parsing of proprietary raw
+instrument files.
+
+---
+
+## FluorPen workflow
+
+`fluorojip` can also process **FluorPen Excel exports** after the relevant
+summary values are organized in the expected format.
+
+A typical workflow is:
+
+```{r}
+# fluorpen_data <- read_excel("path/to/fluorpen_export.xlsx")
+# res_fluorpen  <- calc_fluorojip(fluorpen_data)
+```
+
+Bundled FluorPen-oriented examples can be used to check whether the computed
+outputs match expected JIP-test values.
+
+---
+
+## Validation resources
+
+The package includes bundled example files that can be used in validation-oriented workflows,
+including vendor-related examples from **Biolyzer** and **FluorPen**.
+
+These resources are useful for checking whether calculated parameters such as
+`PI_abs` and related indices agree with expected reference outputs.
+
+---
+
+## Shiny interface
+
+For interactive analysis, `fluorojip` also provides a **Shiny application**
+for data import, parameter calculation, visualization, normalization, and export.
+
+```{r}
+# run_fluorojip_app()
+```
+
+This interface is useful for exploratory analyses and for users who prefer not to
+work directly with scripts.
+
+---
+
+## Summary
+
+The `fluorojip` workflow provides a reproducible path from fluorescence summary data
+or supported exported trace tables to JIP-test calculation, validation,
+visualization, and interactive exploration.
+
+The package is designed to support PSII performance analysis through a coherent workflow
+that combines parameter computation, supported import helpers, bundled validation files,
+and publication-oriented exploratory graphics.
+
+## References
+
+The scientific background of the implemented OJIP / JIP-test parameters is
+primarily based on the following references:
+
+Ripoll, J., Bertin, N., Bidel, L. P. R., & Urban, L. (2016). A user’s view of
+the parameters derived from the induction curves of maximal chlorophyll *a*
+fluorescence: Perspectives for analyzing stress. *Frontiers in Plant Science*,
+7, Article 1679. https://doi.org/10.3389/fpls.2016.01679
+
+Stirbet, A., & Govindjee. (2011). On the relation between the Kautsky effect
+(chlorophyll *a* fluorescence induction) and photosystem II: Basics and
+applications of the OJIP fluorescence transient. *Journal of Photochemistry
+and Photobiology B: Biology*, 104(1-2), 236-257.
+https://doi.org/10.1016/j.jphotobiol.2010.12.010
+
+Strasser, R. J., Srivastava, A., & Govindjee. (1995). Polyphasic chlorophyll *a*
+fluorescence transient in plants and cyanobacteria. *Photochemistry and
+Photobiology*, 61(1), 32-42.
+https://doi.org/10.1111/j.1751-1097.1995.tb09240.x
+
+Strasser, R. J., Tsimilli-Michael, M., & Srivastava, A. (2004). Analysis of
+the chlorophyll *a* fluorescence transient. In G. C. Papageorgiou &
+Govindjee (Eds.), *Chlorophyll a fluorescence: A signature of photosynthesis*
+(pp. 321-362). Springer.
+https://doi.org/10.1007/978-1-4020-3218-9_12
+
+The package also builds on the R ecosystem and several supporting packages:
+
+R Core Team. (2025). *R: A language and environment for statistical computing*
+[Computer software]. R Foundation for Statistical Computing.
+https://www.r-project.org/
+
+Wickham, H., & Bryan, J. (2025). *readxl: Read Excel files*
+[Computer software]. CRAN.
+https://CRAN.R-project.org/package=readxl
+
+Chang, W., Cheng, J., Allaire, J. J., Sievert, C., Schloerke, B., Aden-Buie, G.,
+Xie, Y., Allen, J., McPherson, J., Dipert, A., & Borges, B. (2026).
+*shiny: Web application framework for R* [Computer software]. CRAN.
+https://CRAN.R-project.org/package=shiny
+
+Ligges, U., Maechler, M., & Schnackenberg, S. (2026).
+*scatterplot3d: 3D scatter plot* [Computer software]. CRAN.
+https://CRAN.R-project.org/package=scatterplot3d
+
+Allaire, J. J., Xie, Y., Dervieux, C., McPherson, J., Luraschi, J., Ushey, K.,
+Atkins, A., Wickham, H., Cheng, J., Chang, W., & Iannone, R. (2025).
+*rmarkdown: Dynamic documents for R* [Computer software]. CRAN.
+https://CRAN.R-project.org/package=rmarkdown
+
+Wickham, H. (2026). *testthat: Unit testing for R* [Computer software]. CRAN.
+https://CRAN.R-project.org/package=testthat
+
+For broader perspectives on reproducibility in computational research, see:
+
+Peng, R. D. (2011). Reproducible research in computational science.
+*Science*, 334(6060), 1226-1227.
+https://doi.org/10.1126/science.1213847
+
+Sandve, G. K., Nekrutenko, A., Taylor, J., & Hovig, E. (2013).
+Ten simple rules for reproducible computational research.
+*PLoS Computational Biology*, 9(10), e1003285.
+https://doi.org/10.1371/journal.pcbi.1003285

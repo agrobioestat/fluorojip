@@ -1,0 +1,28 @@
+calc_fluorojip          Compute chlorophyll a fluorescence OJIP /
+                        JIP-test parameters
+calc_fluorojip_file     Read a summary table and compute FluorOJIP
+                        parameters
+calc_fluorojip_fluorpen
+                        Calculate FluorOJIP parameters from a FluorPen
+                        workbook
+calc_fluorojip_handypea
+                        Calculate FluorOJIP parameters from a supported
+                        exported table
+example_fluorojip       Example OJIP summary data
+fluorojip_example_biolyzer_file
+                        Get the bundled Biolyzer validation workbook
+                        path
+fluorpen_to_ojip        Convert FluorPen traces to an OJIP summary
+                        table
+handypea_to_ojip        Convert a supported CSV trace export to an OJIP
+                        summary table
+normalized_jiptable     Build a normalized JIP parameter table
+plot_3d_fluorojip       Plot a 3D scatter plot of OJIP parameters
+plot_heatmap_fluorojip
+                        Plot a heatmap of OJIP parameters
+read_fluorpen_xlsx      Read a FluorPen Excel export
+read_handypea_csv       Read a supported Biolyzer-exported CSV trace
+                        table
+run_fluorojip_app       Run the fluorojip Shiny application
+write_normalized_jiptable
+                        Write a normalized JIP parameter table
