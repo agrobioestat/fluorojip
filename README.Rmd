@@ -1,72 +1,59 @@
 # fluorojip
 
-<!-- badges: start -->
-[![License: GPL-3](https://img.shields.io/badge/License-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub repo](https://img.shields.io/badge/GitHub-agrobioestat%2Ffluorojip-black?logo=github)](https://github.com/agrobioestat/fluorojip)
-<!-- badges: end -->
+`fluorojip` is an R package for computing **chlorophyll *a* fluorescence OJIP / JIP-test parameters** from fluorescence summary data and supported exported trace tables. The package also provides tools for **normalization**, **heatmaps**, **3D exploratory plots**, **validation-oriented workflows**, and an **interactive Shiny application** for users who prefer a graphical interface.
 
-`fluorojip` computes **chlorophyll *a* fluorescence OJIP (JIP-test) parameters** from raw fluorescence summary data and supported exported trace tables.
-
-The package supports workflows based on **Biolyzer-exported CSV trace tables** and **FluorPen Excel exports**, and provides tools for **validation**, **normalization**, **exploratory visualization**, and an interactive **Shiny** interface for data analysis.
-
-It is designed for PSII performance assessment using inputs such as **Fo**, **Fm**, **area above the OJIP curve**, and fluorescence at the **K (300 us)**, **J**, and **I** steps.
-
-In prose, the preferred display form is **PI(Abs)**, while the code and data-frame column name remain `PI_abs`.
+The main goal of `fluorojip` is to support reproducible analysis of PSII performance from fluorescence measurements, from raw imported files to ready-to-plot parameter tables.
 
 ---
 
-## Features
+## Main features
 
-- Compute common JIP-test indices (yields, efficiencies, performance index, fluxes per RC/CS)
-- Read and process **supported Biolyzer-exported CSV trace tables** (convert to an OJIP summary, then compute indices)
-- Process **FluorPen Excel exports**
-- Validate results against bundled vendor-oriented example files
-- Build normalized JIP parameter tables (z-score, min-max, control ratio, etc.) and export them
-- Create:
-  - **OJIP curve views**
-  - **Normalized 2D parameter plots**
-  - **Heatmaps** of selected parameters across samples/treatments
-  - **3D scatter plots** for multivariate exploration
-- Launch an interactive **Shiny** application with import, calculation, validation, plotting, export, and help workflows
+- Compute core OJIP / JIP-test parameters from fluorescence summary inputs
+- Support workflows based on **summary tables**, **Biolyzer-exported CSV trace tables**, and **FluorPen Excel exports**
+- Generate derived parameters such as `Fv_Fm`, `Vj`, `Vi`, `Mo`, `phi_Eo`, `psi_Eo`, `ABS_RC`, `TRo_RC`, `ETo_RC`, `DIo_RC`, `PI_abs`, `Sm`, and `N`
+- Build normalized tables for exploratory analysis and downstream statistics
+- Create heatmaps and 3D plots for multivariate interpretation
+- Export normalized results for spreadsheet and reporting workflows
+- Launch an interactive Shiny app for data import, calculation, plotting, validation, and export
+- Use bundled example files for testing and validation
 
 ---
 
 ## Installation
 
-### From GitHub (development version)
+### From CRAN
 
-```r
-# install.packages("remotes")
-remotes::install_github("agrobioestat/fluorojip")
-```
-
-### From CRAN (when available)
+Once the package is available on CRAN, install it with:
 
 ```r
 install.packages("fluorojip")
 ```
 
-### From a local source tarball
+### From GitHub
+
+If you want the development version from GitHub:
 
 ```r
-install.packages("fluorojip_0.1.1.tar.gz", repos = NULL, type = "source")
+install.packages("remotes")
+remotes::install_github("USER/REPOSITORY")
 ```
 
----
+> Replace `USER/REPOSITORY` with the actual GitHub path of the package.
 
-## Typical workflows
+### Optional packages
 
-`fluorojip` can be used in three main ways:
+Some features rely on optional packages suggested by `fluorojip`:
 
-1. Compute JIP-test parameters from fluorescence summary inputs.
-2. Process supported Biolyzer-exported trace tables into OJIP summaries.
-3. Analyze, validate, visualize, and export results interactively through the Shiny interface.
+```r
+install.packages(c("scatterplot3d", "shiny"))
+```
+
+- `scatterplot3d` is used for static 3D plots
+- `shiny` is required to launch the interactive app
 
 ---
 
 ## Quick start
-
-### 1) Load example data and compute indices
 
 ```r
 library(fluorojip)
@@ -74,231 +61,275 @@ library(fluorojip)
 data(example_fluorojip)
 
 res <- calc_fluorojip(example_fluorojip)
+
+head(
+  res[, c("sample_id", "treatment", "Fv_Fm", "Vj", "Vi", "Mo", "PI_abs")]
+)
+```
+
+This workflow uses the bundled example dataset and calculates a standard set of fluorescence-derived parameters.
+
+---
+
+## Supported workflows
+
+### 1. Summary-table workflow
+
+Use this workflow when you already have a summary table containing at least `Fo`, `Fm`, `J`, and `I` values.
+
+```r
+library(fluorojip)
+
+res <- calc_fluorojip(example_fluorojip)
 head(res)
 ```
 
-### 2) Launch the Shiny app
+You can also calculate directly from a delimited file:
 
 ```r
-fluorojip::run_fluorojip_app()
+res <- calc_fluorojip_file("my_summary_table.csv", sep = ",")
 ```
 
-From the project root in RStudio, you can also run:
+### 2. Biolyzer-exported trace workflow
+
+For supported **Biolyzer-exported CSV trace tables**, the recommended workflow is:
 
 ```r
-source("launch_fluorojip_app.R")
-```
-
-The Shiny app currently includes workflows for:
-
-- importing supported files
-- computing OJIP / JIP-test parameters
-- viewing OJIP curves
-- selecting parameters for analysis
-- producing normalized 2D plots
-- generating heatmaps
-- plotting a 3D scatter plot of OJIP parameters
-- running validation tabs
-- exporting results
-- consulting the help tab
-
-### 3) Heatmap of selected parameters
-
-```r
-params <- c("Fv_Fm", "PI_abs", "ABS_RC", "ETo_RC", "DIo_RC")
-
-plot_heatmap_fluorojip(
-  res,
-  params     = params,
-  sample_col = "sample_id",
-  group_col  = "treatment",
-  scale      = "zscore",
-  main       = "OJIP parameters (z-score)"
-)
-```
-
-### 4) Plot a 3D scatter plot of OJIP parameters
-
-```r
-plot_3d_fluorojip(
-  res,
-  params    = c("Fv_Fm", "PI_abs", "area"),
-  group_col = "treatment",
-  normalize = TRUE
-)
-```
-
----
-
-## Input data format
-
-`calc_fluorojip()` expects a data frame with (at minimum):
-
-- `j`, `i` - fluorescence at J and I steps
-- `fo` **or** `o` (Fo / O step)
-- `fm` **or** `p` (Fm / P step)
-
-For standard `M0`, `ABS_RC`, `TRo_RC`, `ETo_RC`, `DIo_RC`, `N`, and `PI_abs`, also provide a fluorescence value at **300 us**, named `k` or `f300us`.
-
-Optional:
-
-- `area` - area above the induction curve (used for `Sm` and `N`)
-- `t_fm` - time to reach Fm
-- `sample_id` - sample identifier
-- `treatment` - group/treatment label
-
-Rows with physically inconsistent fluorescence steps, such as `J < Fo` or `I < Fo`, are flagged and the affected derived parameters are returned as `NA`.
-
----
-
-## Biolyzer export workflow (optional)
-
-If you have a supported **Biolyzer-exported CSV trace table**, you can compute indices directly:
-
-```r
-res_hp <- calc_fluorojip_handypea("path/to/biolyzer_export.csv")
-head(res_hp)
-```
-
-Or run the workflow step by step:
-
-```r
-raw  <- read_handypea_csv("path/to/biolyzer_export.csv")
+raw  <- read_handypea_csv("biolyzer_export.csv")
 ojip <- handypea_to_ojip(raw)
 res  <- calc_fluorojip(ojip)
 ```
 
-Although some helper function names retain the historical `handypea` prefix for backward compatibility, the supported import workflow is based on **Biolyzer-exported trace tables**, not direct parsing of proprietary raw instrument files.
+Or, using the convenience wrapper:
 
-`handypea_to_ojip()` normalizes raw trace timing to milliseconds before extracting the OJIP steps, so traces exported in either seconds or milliseconds can still target the standard K (`0.27 ms`), J (`2 ms`), and I (`30 ms`) steps.
+```r
+res <- calc_fluorojip_handypea("biolyzer_export.csv")
+```
+
+> The function names retain the historical `handypea` prefix for backward compatibility, but the current supported workflow is based on **Biolyzer-exported trace tables**.
+
+### 3. FluorPen workflow
+
+For supported **FluorPen Excel exports**:
+
+```r
+raw  <- read_fluorpen_xlsx("fluorpen_export.xlsx")
+ojip <- fluorpen_to_ojip(raw)
+res  <- calc_fluorojip(ojip)
+```
+
+Or, using the convenience wrapper:
+
+```r
+res <- calc_fluorojip_fluorpen("fluorpen_export.xlsx")
+```
 
 ---
 
-## Bundled Biolyzer validation workbook
+## Key outputs
 
-The package includes a bundled **Biolyzer example workbook** used to validate `PI_abs` and related JIP-test parameters against vendor-exported results. Retrieve its path with:
+`fluorojip` can compute and organize several important parameters for OJIP / JIP-test interpretation, including:
+
+### Primary fluorescence and relative variable fluorescence
+
+- `Fv`
+- `phi_Po`
+- `Fv_Fm`
+- `Vj`
+- `Vi`
+
+### Structure and turnover-related terms
+
+- `Mo`
+- `Sm`
+- `N`
+
+### Fluxes per reaction center
+
+- `ABS_RC`
+- `TRo_RC`
+- `ETo_RC`
+- `DIo_RC`
+
+### Fluxes per cross section
+
+- `ABS_CSm`
+- `TRo_CSm`
+- `ETo_CSm`
+- `DIo_CSm`
+
+### Performance and efficiencies
+
+- `phi_Eo`
+- `psi_Eo`
+- `PI_abs`
+
+---
+
+## Important notes for users
+
+- `Fo`, `Fm`, `J`, and `I` are the minimum required inputs for the core calculation workflow.
+- Reliable calculation of `Mo`, `N`, RC-based fluxes, and `PI_abs` requires a **K-step / F300 / 300 µs-equivalent measurement** provided as `k`, `fk`, `f300`, `f300us`, `f_300us`, or `f_300_us`.
+- When K-step / F300 information is not available, `fluorojip` does **not** guess those values. Instead, the package returns `NA` for dependent terms and issues a warning.
+- Cross-section outputs such as `ABS_CSm`, `TRo_CSm`, `ETo_CSm`, and `DIo_CSm` are useful package outputs for comparison workflows, but they should be interpreted carefully when compared with instrument-specific conventions.
+
+---
+
+## Normalization and export
+
+The package provides tools to prepare parameter tables for comparison across samples and treatments.
 
 ```r
-fluorojip_example_biolyzer_file()
+norm_tab <- normalized_jiptable(
+  res,
+  params = c("Fv_Fm", "PI_abs", "ABS_RC", "ETo_RC", "DIo_RC"),
+  sample_col = "sample_id",
+  group_col = "treatment",
+  normalize = "zscore",
+  output = "wide"
+)
+
+write_normalized_jiptable(norm_tab, "fluorojip_normalized.csv")
 ```
 
-For installed-package use, this is equivalent to:
+Supported normalization modes include:
+
+- `"none"`
+- `"zscore"`
+- `"minmax"`
+- `"control_ratio"`
+- `"control_then_zscore"`
+
+---
+
+## Visualization
+
+### Heatmap
 
 ```r
-system.file(
-  "extdata",
-  "OJIPExporttoExcelTest001-01062024at20h31.xls",
-  package = "fluorojip"
+plot_heatmap_fluorojip(
+  res,
+  params = c("DIo_RC", "ABS_RC", "PI_abs", "ETo_RC", "Fv_Fm"),
+  sample_col = "sample_id",
+  group_col = "treatment",
+  scale = "zscore",
+  main = "fluorojip heatmap"
 )
 ```
 
+### 3D exploratory plot
+
+```r
+plot_3d_fluorojip(
+  res,
+  params = c("Fv_Fm", "PI_abs", "area")
+)
+```
+
+These plotting functions are useful for identifying multivariate patterns across treatments and samples.
+
 ---
 
-## FluorPen workflow
+## Interactive Shiny app
 
-`fluorojip` can also process **FluorPen Excel exports** in which:
+To launch the bundled graphical interface:
 
-- columns are measurements
-- the first column is the OJIP time grid
-- footer rows contain vendor-calculated JIP parameters
+```r
+run_fluorojip_app()
+```
+
+The Shiny app provides an interactive environment for:
+
+- loading example data, summary tables, and FluorPen workbooks
+- calculating OJIP / JIP-test parameters
+- inspecting OJIP curves
+- selecting and plotting parameters
+- generating normalized plots, heatmaps, and 3D views
+- running validation-oriented workflows
+- exporting results
+
+This interface is especially helpful for users who prefer not to build the full analysis pipeline manually in scripts.
+
+---
+
+## Bundled example resources
+
+`fluorojip` includes example datasets and files that help users test workflows and validate outputs:
+
+- `example_fluorojip` — example summary dataset included in the package
+- `fluorojip_example_biolyzer_file()` — returns the bundled Biolyzer validation workbook path
+- bundled example files in `inst/extdata/` for reproducible testing and validation
 
 Example:
 
 ```r
-raw_fp <- read_fluorpen_xlsx("fluorpen/FluorPen - test 2.xlsx")
-ojip_fp <- fluorpen_to_ojip(raw_fp)
-res_fp <- calc_fluorojip(ojip_fp)
+library(fluorojip)
 
-res_fp[, c("sample_id", "Fv_Fm", "Mo", "ABS_RC", "ETo_RC", "DIo_RC", "PI_abs")]
+biolyzer_file <- fluorojip_example_biolyzer_file()
+biolyzer_file
 ```
-
-To reproduce the project-local FluorPen validation run:
-
-```r
-source("tools/compare_fluorpen_validation.R")
-```
-
-This writes:
-
-- `tools/fluorpen_comparison.csv`
 
 ---
 
-## Normalized parameter tables
-
-Build a wide or long table with optional normalization:
+## Example analysis workflow
 
 ```r
-tab_wide <- normalized_jiptable(
+library(fluorojip)
+
+data(example_fluorojip)
+
+res <- calc_fluorojip(example_fluorojip)
+
+plot_heatmap_fluorojip(
   res,
-  params    = c("Fv_Fm", "PI_abs", "ABS_RC", "TRo_RC", "ETo_RC", "DIo_RC"),
-  normalize = "zscore",
-  output    = "wide"
+  params = c("Fv_Fm", "PI_abs", "ABS_RC", "ETo_RC", "DIo_RC"),
+  sample_col = "sample_id",
+  group_col = "treatment",
+  scale = "zscore",
+  main = "OJIP parameter heatmap"
 )
 
-head(tab_wide)
+norm_tab <- normalized_jiptable(
+  res,
+  params = c("Fv_Fm", "PI_abs", "ABS_RC", "ETo_RC", "DIo_RC"),
+  sample_col = "sample_id",
+  group_col = "treatment",
+  normalize = "zscore",
+  output = "wide"
+)
+
+head(norm_tab)
 ```
 
-Write a normalized JIP parameter table:
-
-```r
-write_normalized_jiptable(tab_wide, "normalized_jiptable.csv")
-```
-
-Note: the current export helper writes a semicolon-delimited text table, which is convenient for spreadsheet software in many locales.
-
 ---
 
-## What gets computed
+## Scientific background
 
-`calc_fluorojip()` returns the original data frame plus common JIP-test variables, including:
+The package is grounded in the OJIP / JIP-test framework widely used for the interpretation of chlorophyll *a* fluorescence induction curves and PSII performance.
 
-- Basic: `Fv`, `phi_Po` (`Fv_Fm`)
-- Relative variable fluorescence: `Vj`, `Vi`
-- Structure / turnover: `Mo`, `Sm`, `N`
-- Fluxes per reaction center: `ABS_RC`, `TRo_RC`, `ETo_RC`, `DIo_RC`
-- Fluxes per cross-section: `ABS_CSm`, `TRo_CSm`, `ETo_CSm`, `DIo_CSm`
-- Efficiencies: `psi_Eo`, `phi_Eo`
-- Performance index: `PI_abs` (displayed in prose as **PI(Abs)**)
+Key references include:
 
----
-
-## Documentation
-
-- Function help: `?calc_fluorojip`, `?plot_heatmap_fluorojip`, `?normalized_jiptable`
-- Vignette (if installed with vignettes): `vignette("fluorojip-intro")`
-
----
-
-## Acknowledgements
-
-`fluorojip` builds on the R package ecosystem. Its analytical core relies mainly on base R plus `stats`, `utils`, `graphics`, and `grDevices`; Excel import uses `readxl`; static 3D plotting uses `scatterplot3d`; automated checking uses `testthat`; and the graphical front end uses `shiny`.
-
-These packages and their authors made the development of `fluorojip` possible.
-
----
-
-## Citation
-
-If you use `fluorojip` in academic work, please cite the package and its authors.
-
-In R:
-
-```r
-citation("fluorojip")
-```
-
-Authors:
-- Joao Everthon da Silva Ribeiro
-- Ronald Maldonado Rodriguez
-- Toshik Iarley da Silva
+- Ripoll, J., Bertin, N., Bidel, L. P. R., & Urban, L. (2016). *A user’s view of the parameters derived from the induction curves of maximal chlorophyll a fluorescence: Perspectives for analyzing stress*. Frontiers in Plant Science, 7, 1679.
+- Stirbet, A., & Govindjee. (2011). *On the relation between the Kautsky effect (chlorophyll a fluorescence induction) and photosystem II: Basics and applications of the OJIP fluorescence transient*. Journal of Photochemistry and Photobiology B: Biology, 104(1-2), 236-257.
+- Strasser, R. J., Srivastava, A., & Govindjee. (1995). *Polyphasic chlorophyll a fluorescence transient in plants and cyanobacteria*. Photochemistry and Photobiology, 61(1), 32-42.
+- Strasser, R. J., Tsimilli-Michael, M., & Srivastava, A. (2004). *Analysis of the chlorophyll a fluorescence transient*. In *Chlorophyll a fluorescence: A signature of photosynthesis*.
 
 ---
 
 ## License
 
-GPL-3. See `LICENSE` or package `DESCRIPTION`.
+`fluorojip` is distributed under the **GPL-3** license.
 
-## Contributing / Issues
+---
 
-Bug reports and feature requests: <https://github.com/agrobioestat/fluorojip/issues>
+## Authors
+
+- **Joao Everthon da Silva Ribeiro** — Author and maintainer
+- **Toshik Iarley da Silva** — Author
+- **Ronald Maldonado Rodriguez** — Author
+
+---
+
+## Final note
+
+`fluorojip` was designed to provide a practical and reproducible bridge between fluorescence measurements, JIP-test parameter calculation, exploratory visualization, and export-ready outputs. It is suitable for researchers, students, and analysts working with chlorophyll fluorescence data and PSII performance assessment.
