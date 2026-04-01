@@ -1,5 +1,10 @@
 # fluorojip
 
+[![License: GPL-3](https://img.shields.io/badge/License-GPL--3-blue.svg)](https://opensource.org/licenses/GPL-3.0)
+[![GitHub](https://img.shields.io/badge/GitHub-agrobiostat%2Ffluorojip-black?logo=github)](https://github.com/agrobiostat/fluorojip)
+
+**Analysis of Chlorophyll *a* Fluorescence Transient Parameters in R**
+
 `fluorojip` is an R package for computing **chlorophyll *a* fluorescence OJIP / JIP-test parameters** from fluorescence summary data and supported exported trace tables. The package also provides tools for **normalization**, **heatmaps**, **3D exploratory plots**, **validation-oriented workflows**, and an **interactive Shiny application** for users who prefer a graphical interface.
 
 The main goal of `fluorojip` is to support reproducible analysis of PSII performance from fluorescence measurements, from raw imported files to ready-to-plot parameter tables.
@@ -23,7 +28,7 @@ The main goal of `fluorojip` is to support reproducible analysis of PSII perform
 
 ### From CRAN
 
-Once the package is available on CRAN, install it with:
+After the CRAN release, install it with:
 
 ```r
 install.packages("fluorojip")
@@ -35,10 +40,9 @@ If you want the development version from GitHub:
 
 ```r
 install.packages("remotes")
-remotes::install_github("USER/REPOSITORY")
+remotes::install_github("agrobiostat/fluorojip")
 ```
 
-> Replace `USER/REPOSITORY` with the actual GitHub path of the package.
 
 ### Optional packages
 
@@ -324,7 +328,7 @@ Key references include:
 
 ## Authors
 
-- **Joao Everthon da Silva Ribeiro** — Author and maintainer
+- **Joao Everthon da Silva Ribeiro** — Author and maintainer (j.everthon@hotmail.com)
 - **Toshik Iarley da Silva** — Author
 - **Ronald Maldonado Rodriguez** — Author
 
