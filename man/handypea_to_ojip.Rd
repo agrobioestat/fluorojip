@@ -2,13 +2,44 @@
 % Please edit documentation in R/handypea_io.R
 \name{handypea_to_ojip}
 \alias{handypea_to_ojip}
-\title{Convert HandyPEA to OJIP summary}
+\title{Convert a supported CSV trace export to an OJIP summary table}
 \usage{
 handypea_to_ojip(x)
 }
 \arguments{
-\item{x}{A list object returned by read_handypea_csv.}
+\item{x}{A list object returned by \code{read_handypea_csv()}.}
+}
+\value{
+A data frame containing \code{sample_id}, \code{t_fm}, \code{fo}, \code{k}, \code{fm}, \code{j},
+\code{i}, \code{p}, and \code{area}.
 }
 \description{
-Convert HandyPEA to OJIP summary
+Converts a supported exported trace table into an OJIP summary table ready
+for downstream FluorOJIP parameter calculation.
+}
+\details{
+Although the function name retains the historical \code{handypea} prefix for
+backward compatibility, the supported import workflow is based on
+Biolyzer-exported trace tables.
+
+Time values are normalized internally to milliseconds so the
+function can target the standard OJIP steps even when exported trace times
+are recorded in seconds, milliseconds, or microseconds.
+}
+\examples{
+raw <- list(
+  times_s = c(0.00002, 0.00027, 0.002, 0.03, 0.10),
+  mat = matrix(
+    c(
+      280, 340, 700, 950, 1200,
+      300, 360, 730, 980, 1250
+    ),
+    nrow = 2,
+    byrow = TRUE,
+    dimnames = list(c("S1", "S2"), NULL)
+  )
+)
+
+ojip <- handypea_to_ojip(raw)
+ojip
 }

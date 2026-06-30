@@ -2,13 +2,38 @@
 % Please edit documentation in R/handypea_io.R
 \name{calc_fluorojip_handypea}
 \alias{calc_fluorojip_handypea}
-\title{Calculate fluorojip from HandyPEA file}
+\title{Calculate FluorOJIP parameters from a supported exported table}
 \usage{
 calc_fluorojip_handypea(file)
 }
 \arguments{
-\item{file}{Path to the HandyPEA CSV file.}
+\item{file}{Path to the supported Biolyzer-exported CSV trace table.}
+}
+\value{
+A data frame with FluorOJIP parameters returned by
+\code{calc_fluorojip()}.
 }
 \description{
-Calculate fluorojip from HandyPEA file
+Reads a supported exported trace table, derives an OJIP summary, and then
+computes FluorOJIP parameters.
+}
+\details{
+Although the function name retains the historical \code{handypea} prefix for
+backward compatibility, the supported import workflow is based on
+Biolyzer-exported trace tables.
+
+Typical workflow:\cr
+\code{read_handypea_csv()} -> \code{handypea_to_ojip()} -> \code{calc_fluorojip()}.
+}
+\examples{
+txt <- c(
+  '"Record No",0.00002,0.00027,0.002,0.03,0.10',
+  '"S1",280,340,700,950,1200',
+  '"S2",300,360,730,980,1250'
+)
+f <- tempfile(fileext = ".csv")
+writeLines(txt, f)
+
+res <- calc_fluorojip_handypea(f)
+res[, c("sample_id", "Fv_Fm", "PI_abs")]
 }

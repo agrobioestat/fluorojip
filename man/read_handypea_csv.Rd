@@ -2,13 +2,41 @@
 % Please edit documentation in R/handypea_io.R
 \name{read_handypea_csv}
 \alias{read_handypea_csv}
-\title{Read HandyPEA CSV export}
+\title{Read a supported Biolyzer-exported CSV trace table}
 \usage{
 read_handypea_csv(file)
 }
 \arguments{
-\item{file}{Path to the HandyPEA CSV file.}
+\item{file}{Path to the supported Biolyzer-exported CSV trace table.}
+}
+\value{
+A list with three elements: \code{times_s}, the extracted time points;
+\code{ids}, the trace identifiers; and \code{mat}, a numeric matrix containing the
+fluorescence traces.
 }
 \description{
-Read HandyPEA CSV export
+Reads a CSV trace table exported by Biolyzer and prepares it for
+downstream OJIP summary extraction.
+}
+\details{
+Although the function name retains the historical \code{handypea} prefix for
+backward compatibility, this workflow is based on supported exported trace
+tables rather than direct parsing of proprietary raw instrument files.
+
+The function locates the trace header, extracts the time values,
+reads the numeric trace block, removes trailing non-data rows, and returns
+the result in a format suitable for \code{handypea_to_ojip()}.
+}
+\examples{
+txt <- c(
+  '"Record No",0.00002,0.00027,0.002,0.03,0.10',
+  '"S1",280,340,700,950,1200',
+  '"S2",300,360,730,980,1250'
+)
+f <- tempfile(fileext = ".csv")
+writeLines(txt, f)
+
+raw <- read_handypea_csv(f)
+raw$times_s
+dim(raw$mat)
 }

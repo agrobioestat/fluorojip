@@ -3,16 +3,26 @@
 \docType{data}
 \name{example_fluorojip}
 \alias{example_fluorojip}
-\title{Example OJIP Data (HandyPEA)}
+\title{Example OJIP summary data}
 \format{
-A data frame with columns for sample identification,
-treatment groups, and fluorescence induction values.
+A data frame with columns for sample identification, treatment
+groups, and fluorescence summary values used in JIP-test calculations.
 }
 \usage{
 data(example_fluorojip)
 }
 \description{
-A dataset containing raw fluorescence values used to demonstrate
-the calculation of JIP-test parameters.
+A dataset containing fluorescence summary values used to demonstrate
+the calculation of FluorOJIP / JIP-test parameters.
+}
+\details{
+The data are organized in the format expected by \code{calc_fluorojip()},
+including sample identifiers, treatment groups, and summary fluorescence
+variables such as \code{fo}, \code{fm}, \code{j}, \code{i}, \code{area},
+and, when available, \code{k}.
+}
+\examples{
+data(example_fluorojip)
+head(example_fluorojip)
 }
 \keyword{datasets}

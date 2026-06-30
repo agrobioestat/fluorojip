@@ -3,7 +3,7 @@
 \name{plot_heatmap_fluorojip}
 \alias{plot_heatmap_fluorojip}
 \alias{plot_param_heatmap}
-\title{Plot Heatmap of OJIP Parameters}
+\title{Plot a heatmap of OJIP parameters}
 \usage{
 plot_heatmap_fluorojip(
   res,
@@ -24,18 +24,43 @@ plot_param_heatmap(
 )
 }
 \arguments{
-\item{res}{Data frame with OJIP results.}
+\item{res}{Data frame with OJIP / JIP-test results.}
 
 \item{params}{Character vector of parameters to plot.}
 
 \item{sample_col}{Name of the column with sample IDs.}
 
-\item{group_col}{Name of the column with treatment groups.}
+\item{group_col}{Name of the column with treatment or grouping labels.}
 
-\item{scale}{Normalization method ("zscore" or "none").}
+\item{scale}{Normalization method. Supported values are \code{"zscore"},
+\code{"none"}, and \code{"control_then_zscore"}.}
 
 \item{main}{Title of the plot.}
 }
+\value{
+Invisibly returns the object produced by \code{\link[stats:heatmap]{stats::heatmap()}}.
+}
 \description{
-Plot Heatmap of OJIP Parameters
+Creates a heatmap for selected FluorOJIP / JIP-test parameters across
+samples, with optional normalization.
+}
+\examples{
+df <- data.frame(
+  sample_id = c("S1", "S2", "S3"),
+  treatment = c("control", "stress", "stress"),
+  fo = c(280, 300, 295),
+  fm = c(1200, 1250, 1230),
+  j = c(700, 730, 720),
+  i = c(950, 980, 970),
+  k = c(340, 360, 350),
+  area = c(32000, 35000, 34000)
+)
+
+res <- calc_fluorojip(df)
+plot_heatmap_fluorojip(
+  res,
+  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
+  group_col = "treatment",
+  scale = "zscore"
+)
 }

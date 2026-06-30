@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalize_fluorojip.R
 \name{normalized_jiptable}
 \alias{normalized_jiptable}
-\title{Normalized JIP-test parameter table}
+\title{Build a normalized JIP parameter table}
 \usage{
 normalized_jiptable(
   df,
@@ -18,22 +18,77 @@ normalized_jiptable(
 \arguments{
 \item{df}{A data frame, typically the output of \code{calc_fluorojip()}.}
 
-\item{params}{Character vector of parameters to include.}
+\item{params}{Character vector of parameter names to include. If \code{NULL},
+a default set of commonly used JIP-test parameters is selected.}
 
-\item{sample_col}{Sample identifier column name.}
+\item{sample_col}{Name of the sample identifier column.}
 
-\item{group_col}{Grouping column name.}
+\item{group_col}{Name of the grouping column, typically a treatment column.}
 
-\item{normalize}{Normalization method: "none", "zscore", "minmax",
-"control_ratio" (value / mean_control), "control_then_zscore".}
+\item{normalize}{Normalization method. One of \code{"none"},
+\code{"zscore"}, \code{"minmax"}, \code{"control_ratio"}, or
+\code{"control_then_zscore"}.}
 
-\item{control_level}{Level of \code{group_col} considered as control.}
+\item{control_level}{Level of \code{group_col} to be used as the control when
+a control-based normalization method is requested.}
 
-\item{output}{Return format: "wide" or "long".}
+\item{output}{Output format: \code{"wide"} or \code{"long"}.}
 
-\item{digits}{Rounding digits.}
+\item{digits}{Number of decimal places used to round normalized parameter
+columns.}
+}
+\value{
+A data frame in wide or long format containing the selected JIP-test
+parameters after the requested normalization step.
 }
 \description{
-Create a tidy (long) and/or wide table of (optionally normalized) JIP-test
-parameters for each sample.
+Creates a wide or long table of FluorOJIP / JIP-test parameters for each
+sample, with optional normalization for exploratory analysis, comparison
+across treatments, and export.
+}
+\details{
+This function is intended for exploratory analysis and reporting workflows in
+which selected FluorOJIP / JIP-test parameters need to be compared across
+samples or treatments on a common scale.
+
+Parameters such as \code{PI_abs}, \code{Mo}, and RC-based fluxes depend on
+the availability of a K-step / 300 us-equivalent input (for example,
+\code{k} or \code{f300us}) in the original summary data used by
+\code{calc_fluorojip()}.
+
+Cross-section outputs such as \code{ABS_CSm}, \code{TRo_CSm},
+\code{ETo_CSm}, and \code{DIo_CSm} are package outputs intended for
+operational comparison workflows and may not fully match every
+instrument-specific convention.
+}
+\examples{
+df <- data.frame(
+  sample_id = c("S1", "S2", "S3"),
+  treatment = c("control", "stress", "stress"),
+  fo = c(280, 300, 295),
+  fm = c(1200, 1250, 1230),
+  j = c(700, 730, 720),
+  i = c(950, 980, 970),
+  k = c(340, 360, 350),
+  area = c(32000, 35000, 34000)
+)
+
+res <- calc_fluorojip(df)
+
+tab_wide <- normalized_jiptable(
+  res,
+  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
+  normalize = "zscore",
+  output = "wide"
+)
+tab_wide
+
+tab_long <- normalized_jiptable(
+  res,
+  params = c("Fv_Fm", "PI_abs"),
+  normalize = "control_ratio",
+  control_level = "control",
+  output = "long"
+)
+head(tab_long)
 }

@@ -1,82 +1,153 @@
-#' Compute chlorophyll a OJIP parameters
-#'
 #' Compute chlorophyll a fluorescence OJIP / JIP-test parameters
-#' from raw fluorescence summary data with noise protection.
 #'
-#' @param df A data frame with at least: t_fm, area, fo (or o), fm (or p), j, i, s.
-#' @return A data frame with calculated OJIP parameters.
+#' Computes chlorophyll a fluorescence OJIP / JIP-test parameters from
+#' fluorescence summary data.
+#'
+#' @param df A data frame containing fluorescence summary columns. At minimum,
+#'   provide Fo (`fo` or `o`), Fm (`fm` or `p`), J (`j` or `fj`), and I (`i`
+#'   or `fi`). Reliable `Mo`, `N`, `PI_abs`, and RC-based fluxes require a
+#'   K-step / 300 us-equivalent measurement supplied as `k`, `fk`, `f300`, or
+#'   `f300us`.
+#' @return A data frame containing the original input columns plus calculated
+#'   FluorOJIP / JIP-test parameters.
+#' @details
+#' The current implementation follows a summary-input workflow. Primary terms
+#' such as `phi_Po`, `Vj`, `Vi`, `psi_Eo`, `phi_Eo`, `Mo`, and `PI_abs` are
+#' computed explicitly from the supplied fluorescence summary values.
+#'
+#' `Mo` is derived from the K-step / F300 region using the standard relation
+#' `4 * (F300 - Fo) / (Fm - Fo)`. If a K-step / 300 us-equivalent value is not
+#' available, the function does not attempt to guess `Mo`; instead, `Mo`, `N`,
+#' RC-based fluxes, and `PI_abs` are returned as `NA` with a warning.
+#'
+#' The cross-section outputs `ABS_CSm`, `TRo_CSm`, `ETo_CSm`, and `DIo_CSm`
+#' are returned as operational package outputs for internal comparison. They are
+#' computed consistently from the supplied summary data, but they should be
+#' described carefully if compared against instrument-specific phenomenological
+#' flux conventions.
+#' @examples
+#' df <- data.frame(
+#'   sample_id = c("S1", "S2"),
+#'   fo = c(280, 300),
+#'   fm = c(1200, 1250),
+#'   j = c(700, 730),
+#'   i = c(950, 980),
+#'   k = c(340, 360),
+#'   area = c(32000, 35000)
+#' )
+#'
+#' res <- calc_fluorojip(df)
+#' res[, c("sample_id", "Fv_Fm", "PI_abs")]
 #' @export
 calc_fluorojip <- function(df) {
 
-  # 1) Input validation
-  required <- c("t_fm", "area", "j", "i", "s")
-  missing_min <- setdiff(required, names(df))
-  if (length(missing_min) > 0) {
-    stop("Missing columns: ", paste(missing_min, collapse = ", "))
-  }
-
-  if (!("fo" %in% names(df)) && !("o" %in% names(df))) stop("Missing Fo.")
-  if (!("fm" %in% names(df)) && !("p" %in% names(df))) stop("Missing Fm.")
-
-  # 2) Helpers
+  # 1) Helpers
   safe_div <- function(a, b) {
     a <- as.numeric(a)
     b <- as.numeric(b)
     ifelse(!is.na(a) & !is.na(b) & b != 0, a / b, NA_real_)
   }
   r6 <- function(x) if (is.numeric(x)) round(x, 6) else x
+  col_or_null <- function(choices) {
+    hit <- choices[choices %in% names(df)][1]
+    if (is.na(hit)) {
+      return(NULL)
+    }
+    as.numeric(df[[hit]])
+  }
+  warn_bad_rows <- function(label, idx, detail) {
+    if (length(idx) > 0) {
+      warning(
+        sprintf("%s invalid for %d row(s); %s.", label, length(idx), detail),
+        call. = FALSE
+      )
+    }
+  }
+
+  # 2) Input resolution
+  Fo <- col_or_null(c("fo", "o"))
+  Fm <- col_or_null(c("fm", "p"))
+  Fj <- col_or_null(c("fj", "j"))
+  Fi <- col_or_null(c("fi", "i"))
+  F300 <- col_or_null(c("k", "fk", "f300", "f300us", "f_300us", "f_300_us"))
+  area <- col_or_null("area")
+
+  if (is.null(Fo)) stop("Missing Fo. Provide `fo` or `o`.")
+  if (is.null(Fm)) stop("Missing Fm. Provide `fm` or `p`.")
+  if (is.null(Fj)) stop("Missing Fj. Provide `j` or `fj`.")
+  if (is.null(Fi)) stop("Missing Fi. Provide `i` or `fi`.")
 
   # 3) Basic fluorescence levels
-  Fo <- if ("fo" %in% names(df)) df[["fo"]] else df[["o"]]
-  Fm <- if ("fm" %in% names(df)) df[["fm"]] else df[["p"]]
   Fv <- Fm - Fo
+  n <- nrow(df)
 
-  # 4) Noise Protection Logic
-  # We ensure Fj and Fi are at least slightly above Fo to prevent negative Vj/Vi
-  Fj <- pmax(df[["j"]], Fo + (0.001 * Fv))
-  Fi <- pmax(df[["i"]], Fo + (0.002 * Fv))
-  Fs <- df[["s"]]
+  base_ok <- is.finite(Fo) & is.finite(Fm) & Fm > Fo & Fo >= 0
+  warn_bad_rows("Fo/Fm pair", which(!base_ok), "affected parameters were set to NA")
 
-  # 5) Primary yields and relative variable fluorescence
-  phi_Po <- safe_div(Fv, Fm)
-  Vj <- safe_div(Fj - Fo, Fv)
-  Vi <- safe_div(Fi - Fo, Fv)
+  j_ok <- base_ok & is.finite(Fj) & Fj >= Fo & Fj <= Fm
+  i_ok <- base_ok & is.finite(Fi) & Fi >= Fo & Fi <= Fm
+  warn_bad_rows("Fj values", which(!j_ok), "Vj and parameters depending on Vj were set to NA")
+  warn_bad_rows("Fi values", which(!i_ok), "Vi and parameters depending on Vi were set to NA")
 
-  # 6) Initial slope (Mo)
-  # Approx time for J is 2ms, but we use the standardized slope calculation
-  Mo <- 4 * safe_div(Fj - Fo, Fv) # Standardized for 4 steps
+  # 4) Primary yields and relative variable fluorescence
+  phi_Po <- ifelse(base_ok, safe_div(Fv, Fm), NA_real_)
+  Vj <- ifelse(j_ok, safe_div(Fj - Fo, Fv), NA_real_)
+  Vi <- ifelse(i_ok, safe_div(Fi - Fo, Fv), NA_real_)
 
-  # 7) Structural / turnover terms
-  Sm <- safe_div(df[["area"]], Fv)
-  N  <- safe_div(Sm * Mo, Vj)
+  # 5) Standard JIP-test quantities
+  # Mo is defined from the first 250 us of the rise:
+  # Mo ~ 4 * (F300us - Fo) / (Fm - Fo)
+  if (is.null(F300)) {
+    warning(
+      "Missing K-step / F300 data; Mo, N, RC-based fluxes, and PI_abs were set to NA. Provide `k` or `f300us` for standard JIP-test calculations.",
+      call. = FALSE
+    )
+    Mo <- rep(NA_real_, n)
+  } else {
+    k_ok <- base_ok & is.finite(F300) & F300 >= Fo & F300 <= Fm
+    warn_bad_rows("K-step / F300 values", which(!k_ok), "Mo, RC-based fluxes, and PI_abs were set to NA")
+    Mo <- ifelse(k_ok, 4 * safe_div(F300 - Fo, Fv), NA_real_)
+  }
 
-  # 8) Fluxes per reaction center (RC)
-  # ABS/RC = Mo/Vj / phi_Po
-  ABS_RC <- safe_div(safe_div(Mo, Vj), phi_Po)
-  TRo_RC <- ABS_RC * phi_Po
-  psi_Eo <- 1 - Vj
+  psi_Eo <- ifelse(!is.na(Vj), 1 - Vj, NA_real_)
+  phi_Eo <- phi_Po * psi_Eo
+
+  # 6) Structural / turnover terms
+  if (is.null(area)) {
+    Sm <- rep(NA_real_, n)
+  } else {
+    area_ok <- base_ok & is.finite(area) & area >= 0
+    warn_bad_rows("Area values", which(!area_ok), "Sm and N were set to NA")
+    Sm <- ifelse(area_ok, safe_div(area, Fv), NA_real_)
+  }
+
+  # 7) Fluxes per reaction center (RC)
+  TRo_RC <- ifelse(!is.na(Mo) & !is.na(Vj) & Vj > 0, safe_div(Mo, Vj), NA_real_)
+  ABS_RC <- safe_div(TRo_RC, phi_Po)
   ETo_RC <- TRo_RC * psi_Eo
   DIo_RC <- ABS_RC - TRo_RC
+  N <- Sm * TRo_RC
 
-  # 9) Fluxes per cross-section (CS)
+  # 8) Fluxes per cross-section (CS)
+  # These are operational package outputs derived from the supplied summary
+  # data and are useful for internal comparison across samples.
   ABS_CSm <- Fm
   TRo_CSm <- phi_Po * ABS_CSm
-  phi_Eo  <- phi_Po * psi_Eo
   ETo_CSm <- phi_Eo * ABS_CSm
   DIo_CSm <- ABS_CSm - TRo_CSm
 
-  # 10) Performance Index (PI_abs)
-  # PI_abs = (RC/ABS) * (phi_Po / (1-phi_Po)) * (psi_Eo / (1-psi_Eo))
+  # 9) Performance Index (PI_abs)
   RC_ABS <- safe_div(1, ABS_RC)
   phi_Po_term <- safe_div(phi_Po, 1 - phi_Po)
   psi_Eo_term <- safe_div(psi_Eo, 1 - psi_Eo)
   PI_abs <- RC_ABS * phi_Po_term * psi_Eo_term
 
-  # 11) Kn / Kp terms
-  Kn <- safe_div(1, Fm)
-  Kp <- safe_div(1, Fv)
+  # 10) kN / kP require additional rate-constant assumptions and are not
+  # derivable from the summary input alone.
+  Kn <- rep(NA_real_, n)
+  Kp <- rep(NA_real_, n)
 
-  # 12) Binding results
+  # 11) Binding results
   res <- df
   res$Fv       <- r6(Fv)
   res$phi_Po   <- r6(phi_Po)
@@ -103,25 +174,43 @@ calc_fluorojip <- function(df) {
   return(res)
 }
 
-#' Wrapper to read CSV and calculate OJIP parameters
+#' Read a summary table and compute FluorOJIP parameters
 #'
-#' @param file Path to the CSV file.
-#' @param sep Separator (default ";").
-#' @param dec Decimal point (default ".").
-#' @param ... Additional arguments passed to read.csv.
+#' @param file Path to the input summary table.
+#' @param sep Field separator used in the input file. Defaults to `";"`.
+#' @param dec Decimal mark used in the input file. Defaults to `"."`.
+#' @param ... Additional arguments passed to [utils::read.csv()].
+#' @return A data frame containing the original input columns plus calculated
+#'   FluorOJIP / JIP-test parameters.
+#' @details
+#' This is a convenience wrapper for summary-input workflows:
+#' `read.csv(file, ...) -> calc_fluorojip(df)`.
+#' @examples
+#' df <- data.frame(
+#'   sample_id = c("S1", "S2"),
+#'   fo = c(280, 300),
+#'   fm = c(1200, 1250),
+#'   j = c(700, 730),
+#'   i = c(950, 980),
+#'   k = c(340, 360),
+#'   area = c(32000, 35000)
+#' )
+#'
+#' f <- tempfile(fileext = ".csv")
+#' utils::write.csv(df, f, row.names = FALSE)
+#'
+#' res <- calc_fluorojip_file(f, sep = ",")
+#' res[, c("sample_id", "Fv_Fm", "PI_abs")]
 #' @importFrom utils read.csv
 #' @export
 calc_fluorojip_file <- function(file, sep = ";", dec = ".", ...) {
-  df <- utils::read.csv(file, sep = sep, dec = dec, header = TRUE, stringsAsFactors = FALSE, ...)
+  df <- utils::read.csv(
+    file,
+    sep = sep,
+    dec = dec,
+    header = TRUE,
+    stringsAsFactors = FALSE,
+    ...
+  )
   calc_fluorojip(df)
-}
-
-#' Write Normalized JIP Table
-#'
-#' @param df The data frame to save.
-#' @param file The path where the file will be saved.
-#' @param ... Additional arguments passed to write.csv.
-#' @export
-write_normalized_jiptable <- function(df, file, ...) {
-  utils::write.csv(df, file = file, row.names = FALSE, ...)
 }

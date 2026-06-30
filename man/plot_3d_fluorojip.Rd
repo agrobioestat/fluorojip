@@ -4,7 +4,7 @@
 \alias{plot_3d_fluorojip}
 \alias{plot_param_3d}
 \alias{plot_param_surface3d}
-\title{Plot 3D Scatterplot of OJIP Parameters}
+\title{Plot a 3D scatter plot of OJIP parameters}
 \usage{
 plot_3d_fluorojip(
   res,
@@ -28,14 +28,48 @@ plot_param_surface3d(
 )
 }
 \arguments{
-\item{res}{Data frame with OJIP results.}
+\item{res}{Data frame with OJIP / JIP-test results.}
 
 \item{params}{Character vector of exactly 3 parameters to plot.}
 
-\item{group_col}{Name of the column with treatment groups.}
+\item{group_col}{Name of the column with treatment or grouping labels.}
 
-\item{normalize}{Logical indicating if data should be normalized.}
+\item{normalize}{Logical indicating whether selected parameters should be
+z-score normalized before plotting.}
+}
+\value{
+Invisibly returns the object produced by
+\code{\link[scatterplot3d:scatterplot3d]{scatterplot3d::scatterplot3d()}}.
 }
 \description{
-Plot 3D Scatterplot of OJIP Parameters
+Creates an exploratory 3D scatter plot for exactly three selected
+FluorOJIP / JIP-test parameters.
+}
+\details{
+\code{plot_param_3d()} and \code{plot_param_surface3d()} are aliases of
+\code{plot_3d_fluorojip()}. The name \code{plot_param_surface3d()} is retained for
+backward compatibility, although the function produces a 3D scatter plot
+rather than an interpolated surface.
+}
+\examples{
+if (requireNamespace("scatterplot3d", quietly = TRUE)) {
+  df <- data.frame(
+    sample_id = c("S1", "S2", "S3"),
+    treatment = c("control", "stress", "stress"),
+    fo = c(280, 300, 295),
+    fm = c(1200, 1250, 1230),
+    j = c(700, 730, 720),
+    i = c(950, 980, 970),
+    k = c(340, 360, 350),
+    area = c(32000, 35000, 34000)
+  )
+
+  res <- calc_fluorojip(df)
+  plot_3d_fluorojip(
+    res,
+    params = c("Fv_Fm", "PI_abs", "ABS_RC"),
+    group_col = "treatment",
+    normalize = TRUE
+  )
+}
 }

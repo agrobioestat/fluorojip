@@ -1,17 +1,71 @@
-#' Normalized JIP-test parameter table
+#' Build a normalized JIP parameter table
 #'
-#' Create a tidy (long) and/or wide table of (optionally normalized) JIP-test
-#' parameters for each sample.
+#' Creates a wide or long table of FluorOJIP / JIP-test parameters for each
+#' sample, with optional normalization for exploratory analysis, comparison
+#' across treatments, and export.
 #'
 #' @param df A data frame, typically the output of \code{calc_fluorojip()}.
-#' @param params Character vector of parameters to include.
-#' @param sample_col Sample identifier column name.
-#' @param group_col Grouping column name.
-#' @param normalize Normalization method: "none", "zscore", "minmax",
-#'   "control_ratio" (value / mean_control), "control_then_zscore".
-#' @param control_level Level of \code{group_col} considered as control.
-#' @param output Return format: "wide" or "long".
-#' @param digits Rounding digits.
+#' @param params Character vector of parameter names to include. If \code{NULL},
+#'   a default set of commonly used JIP-test parameters is selected.
+#' @param sample_col Name of the sample identifier column.
+#' @param group_col Name of the grouping column, typically a treatment column.
+#' @param normalize Normalization method. One of \code{"none"},
+#'   \code{"zscore"}, \code{"minmax"}, \code{"control_ratio"}, or
+#'   \code{"control_then_zscore"}.
+#' @param control_level Level of \code{group_col} to be used as the control when
+#'   a control-based normalization method is requested.
+#' @param output Output format: \code{"wide"} or \code{"long"}.
+#' @param digits Number of decimal places used to round normalized parameter
+#'   columns.
+#'
+#' @return A data frame in wide or long format containing the selected JIP-test
+#'   parameters after the requested normalization step.
+#'
+#' @details
+#' This function is intended for exploratory analysis and reporting workflows in
+#' which selected FluorOJIP / JIP-test parameters need to be compared across
+#' samples or treatments on a common scale.
+#'
+#' Parameters such as \code{PI_abs}, \code{Mo}, and RC-based fluxes depend on
+#' the availability of a K-step / 300 us-equivalent input (for example,
+#' \code{k} or \code{f300us}) in the original summary data used by
+#' \code{calc_fluorojip()}.
+#'
+#' Cross-section outputs such as \code{ABS_CSm}, \code{TRo_CSm},
+#' \code{ETo_CSm}, and \code{DIo_CSm} are package outputs intended for
+#' operational comparison workflows and may not fully match every
+#' instrument-specific convention.
+#'
+#' @examples
+#' df <- data.frame(
+#'   sample_id = c("S1", "S2", "S3"),
+#'   treatment = c("control", "stress", "stress"),
+#'   fo = c(280, 300, 295),
+#'   fm = c(1200, 1250, 1230),
+#'   j = c(700, 730, 720),
+#'   i = c(950, 980, 970),
+#'   k = c(340, 360, 350),
+#'   area = c(32000, 35000, 34000)
+#' )
+#'
+#' res <- calc_fluorojip(df)
+#'
+#' tab_wide <- normalized_jiptable(
+#'   res,
+#'   params = c("Fv_Fm", "PI_abs", "ABS_RC"),
+#'   normalize = "zscore",
+#'   output = "wide"
+#' )
+#' tab_wide
+#'
+#' tab_long <- normalized_jiptable(
+#'   res,
+#'   params = c("Fv_Fm", "PI_abs"),
+#'   normalize = "control_ratio",
+#'   control_level = "control",
+#'   output = "long"
+#' )
+#' head(tab_long)
 #' @export
 normalized_jiptable <- function(df,
                                 params = NULL,
@@ -30,24 +84,25 @@ normalized_jiptable <- function(df,
                 "ABS_CSm", "TRo_CSm", "ETo_CSm", "DIo_CSm")
   }
 
-  # Ensure columns exist
+  # Ensure requested parameter columns exist
   available <- intersect(params, names(df))
   if (length(available) < length(params)) {
-    warning("Some requested params not found in df: ", paste(setdiff(params, available), collapse=", "))
+    warning(
+      "Some requested params were not found in 'df': ",
+      paste(setdiff(params, available), collapse = ", ")
+    )
   }
   params <- available
 
-  # Subset
+  # Subset to required columns only
   cols_keep <- c(sample_col, group_col, params)
-  # CORREÇÃO AQUI: removido o espaço entre df_ e sub
-  df_sub <- df[, intersect(cols_keep, names(df)), drop=FALSE]
+  df_sub <- df[, intersect(cols_keep, names(df)), drop = FALSE]
 
-  # Normalize
+  # Normalize selected parameters
   df_norm <- df_sub
 
   if (normalize != "none") {
-    # Helper to scale vector
-    scale_vec <- function(x, method, ctrl_val = NA) {
+    scale_vec <- function(x, method, ctrl_val = NA_real_) {
       if (all(is.na(x))) return(x)
 
       if (method == "zscore") {
@@ -56,41 +111,44 @@ normalized_jiptable <- function(df,
         if (is.na(sdv) || sdv == 0) return(x * 0)
         return((x - mu) / sdv)
       }
+
       if (method == "minmax") {
         rng <- range(x, na.rm = TRUE)
         if (rng[2] == rng[1]) return(x * 0)
         return((x - rng[1]) / (rng[2] - rng[1]))
       }
+
       if (method == "control_ratio") {
         if (is.na(ctrl_val) || ctrl_val == 0) return(x)
         return(x / ctrl_val)
       }
-      return(x)
+
+      x
     }
 
-    # Calculate control means if needed
-    ctrl_means <- rep(NA, length(params))
+    # Calculate control means when a control-based normalization is requested
+    ctrl_means <- rep(NA_real_, length(params))
     names(ctrl_means) <- params
+
     if (grepl("control", normalize)) {
       if (is.null(control_level) || is.null(group_col)) {
-        stop("Must provide control_level and group_col for control-based normalization")
+        stop("Must provide 'control_level' and 'group_col' for control-based normalization.")
       }
+
       idx_ctrl <- which(df_sub[[group_col]] == control_level)
-      if (length(idx_ctrl) == 0) stop("Control level not found in data")
+      if (length(idx_ctrl) == 0) stop("Control level not found in data.")
 
       for (p in params) {
         ctrl_means[p] <- mean(df_sub[idx_ctrl, p], na.rm = TRUE)
       }
     }
 
-    # Apply normalization
     for (p in params) {
       vals <- df_sub[[p]]
 
       if (normalize == "control_ratio") {
         df_norm[[p]] <- scale_vec(vals, "control_ratio", ctrl_means[p])
       } else if (normalize == "control_then_zscore") {
-        # First ratio, then zscore of the whole set
         vals_ratio <- scale_vec(vals, "control_ratio", ctrl_means[p])
         df_norm[[p]] <- scale_vec(vals_ratio, "zscore")
       } else {
@@ -99,28 +157,81 @@ normalized_jiptable <- function(df,
     }
   }
 
+  # Round numeric parameter columns
+  for (p in params) {
+    if (is.numeric(df_norm[[p]])) {
+      df_norm[[p]] <- round(df_norm[[p]], digits = digits)
+    }
+  }
+
   if (output == "wide") {
     return(df_norm)
-  } else {
-    # Convert to long
-    # Using base reshape logic or utils::stack
-    df_long <- data.frame()
-    for (p in params) {
-      tmp <- df_norm[, c(sample_col, group_col)]
-      tmp$parameter <- p
-      tmp$value <- df_norm[[p]]
-      df_long <- rbind(df_long, tmp)
-    }
-    return(df_long)
   }
+
+  # Convert to long format using base R
+  df_long <- data.frame()
+  for (p in params) {
+    tmp <- df_norm[, c(sample_col, group_col), drop = FALSE]
+    tmp$parameter <- p
+    tmp$value <- df_norm[[p]]
+    df_long <- rbind(df_long, tmp)
+  }
+
+  df_long
 }
 
-#' Write Normalized JIP Table
+#' Write a normalized JIP parameter table
 #'
-#' @param df The data frame to save.
-#' @param file The path where the file will be saved.
-#' @param ... Additional arguments passed to write.csv.
+#' Exports a normalized FluorOJIP / JIP-test parameter table to disk for use in
+#' spreadsheet software or downstream statistical workflows.
+#'
+#' @param df A data frame to export, typically generated by
+#'   \code{normalized_jiptable()}.
+#' @param file Path to the output file.
+#' @param ... Additional arguments passed to \code{utils::write.table()}.
+#'
+#' @return This function is called for its side effect of writing a file to
+#'   disk. It invisibly returns the output path.
+#'
+#' @details
+#' The table is written with a semicolon field separator (\code{sep = ";"})
+#' and decimal point (\code{dec = "."}). This behavior is intentional and may
+#' be convenient for spreadsheet workflows, but it differs from the default
+#' behavior of \code{write.csv()}.
+#'
+#' @examples
+#' df <- data.frame(
+#'   sample_id = c("S1", "S2"),
+#'   treatment = c("control", "stress"),
+#'   fo = c(280, 300),
+#'   fm = c(1200, 1250),
+#'   j = c(700, 730),
+#'   i = c(950, 980),
+#'   k = c(340, 360),
+#'   area = c(32000, 35000)
+#' )
+#'
+#' res <- calc_fluorojip(df)
+#' tab <- normalized_jiptable(
+#'   res,
+#'   params = c("Fv_Fm", "PI_abs"),
+#'   output = "wide"
+#' )
+#'
+#' f <- tempfile(fileext = ".csv")
+#' write_normalized_jiptable(tab, f)
+#' file.exists(f)
 #' @export
 write_normalized_jiptable <- function(df, file, ...) {
-  utils::write.table(df, file, sep = ";", dec = ".", row.names = FALSE, quote = FALSE, ...)
+  utils::write.table(
+    df,
+    file,
+    sep = ";",
+    dec = ".",
+    row.names = FALSE,
+    quote = FALSE,
+    ...
+  )
+
+  invisible(file)
 }

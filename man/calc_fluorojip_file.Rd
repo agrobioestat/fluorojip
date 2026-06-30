@@ -2,19 +2,44 @@
 % Please edit documentation in R/calc_fluorojip.R
 \name{calc_fluorojip_file}
 \alias{calc_fluorojip_file}
-\title{Wrapper to read CSV and calculate OJIP parameters}
+\title{Read a summary table and compute FluorOJIP parameters}
 \usage{
 calc_fluorojip_file(file, sep = ";", dec = ".", ...)
 }
 \arguments{
-\item{file}{Path to the CSV file.}
+\item{file}{Path to the input summary table.}
 
-\item{sep}{Separator (default ";").}
+\item{sep}{Field separator used in the input file. Defaults to \code{";"}.}
 
-\item{dec}{Decimal point (default ".").}
+\item{dec}{Decimal mark used in the input file. Defaults to \code{"."}.}
 
-\item{...}{Additional arguments passed to read.csv.}
+\item{...}{Additional arguments passed to \code{\link[utils:read.table]{utils::read.csv()}}.}
+}
+\value{
+A data frame containing the original input columns plus calculated
+FluorOJIP / JIP-test parameters.
 }
 \description{
-Wrapper to read CSV and calculate OJIP parameters
+Read a summary table and compute FluorOJIP parameters
+}
+\details{
+This is a convenience wrapper for summary-input workflows:
+\code{read.csv(file, ...) -> calc_fluorojip(df)}.
+}
+\examples{
+df <- data.frame(
+  sample_id = c("S1", "S2"),
+  fo = c(280, 300),
+  fm = c(1200, 1250),
+  j = c(700, 730),
+  i = c(950, 980),
+  k = c(340, 360),
+  area = c(32000, 35000)
+)
+
+f <- tempfile(fileext = ".csv")
+utils::write.csv(df, f, row.names = FALSE)
+
+res <- calc_fluorojip_file(f, sep = ",")
+res[, c("sample_id", "Fv_Fm", "PI_abs")]
 }

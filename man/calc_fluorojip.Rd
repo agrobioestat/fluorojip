@@ -2,17 +2,52 @@
 % Please edit documentation in R/calc_fluorojip.R
 \name{calc_fluorojip}
 \alias{calc_fluorojip}
-\title{Compute chlorophyll a OJIP parameters}
+\title{Compute chlorophyll a fluorescence OJIP / JIP-test parameters}
 \usage{
 calc_fluorojip(df)
 }
 \arguments{
-\item{df}{A data frame with at least: t_fm, area, fo (or o), fm (or p), j, i, s.}
+\item{df}{A data frame containing fluorescence summary columns. At minimum,
+provide Fo (\code{fo} or \code{o}), Fm (\code{fm} or \code{p}), J (\code{j} or \code{fj}), and I (\code{i}
+or \code{fi}). Reliable \code{Mo}, \code{N}, \code{PI_abs}, and RC-based fluxes require a
+K-step / 300 us-equivalent measurement supplied as \code{k}, \code{fk}, \code{f300}, or
+\code{f300us}.}
 }
 \value{
-A data frame with calculated OJIP parameters.
+A data frame containing the original input columns plus calculated
+FluorOJIP / JIP-test parameters.
 }
 \description{
-Compute chlorophyll a fluorescence OJIP / JIP-test parameters
-from raw fluorescence summary data with noise protection.
+Computes chlorophyll a fluorescence OJIP / JIP-test parameters from
+fluorescence summary data.
+}
+\details{
+The current implementation follows a summary-input workflow. Primary terms
+such as \code{phi_Po}, \code{Vj}, \code{Vi}, \code{psi_Eo}, \code{phi_Eo}, \code{Mo}, and \code{PI_abs} are
+computed explicitly from the supplied fluorescence summary values.
+
+\code{Mo} is derived from the K-step / F300 region using the standard relation
+\code{4 * (F300 - Fo) / (Fm - Fo)}. If a K-step / 300 us-equivalent value is not
+available, the function does not attempt to guess \code{Mo}; instead, \code{Mo}, \code{N},
+RC-based fluxes, and \code{PI_abs} are returned as \code{NA} with a warning.
+
+The cross-section outputs \code{ABS_CSm}, \code{TRo_CSm}, \code{ETo_CSm}, and \code{DIo_CSm}
+are returned as operational package outputs for internal comparison. They are
+computed consistently from the supplied summary data, but they should be
+described carefully if compared against instrument-specific phenomenological
+flux conventions.
+}
+\examples{
+df <- data.frame(
+  sample_id = c("S1", "S2"),
+  fo = c(280, 300),
+  fm = c(1200, 1250),
+  j = c(700, 730),
+  i = c(950, 980),
+  k = c(340, 360),
+  area = c(32000, 35000)
+)
+
+res <- calc_fluorojip(df)
+res[, c("sample_id", "Fv_Fm", "PI_abs")]
 }
