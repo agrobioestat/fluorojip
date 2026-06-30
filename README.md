@@ -115,6 +115,6 @@ citation("fluorojip")
 License
 This package is distributed under the GPL-3 license.
 Authors
-Joao Everthon da Silva Ribeiro
-Toshik Iarley da Silva
+Joao Everthon da Silva Ribeiro,
+Toshik Iarley da Silva,
 Ronald Maldonado Rodriguez
