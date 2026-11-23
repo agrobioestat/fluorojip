@@ -13,6 +13,15 @@ exported by instrument software, and provides plots and a Shiny interface.
 
 ## Installation
 
+Version 0.2.0 (described in the Royal Society Open Science article) from GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("agrobioestat/fluorojip@v0.2.0")
+```
+
+The CRAN version (currently 0.1.1) is installed with:
+
 ```r
 install.packages("fluorojip")
 ```
