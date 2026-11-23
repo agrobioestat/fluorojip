@@ -3,15 +3,19 @@
 \name{plot_heatmap_fluorojip}
 \alias{plot_heatmap_fluorojip}
 \alias{plot_param_heatmap}
-\title{Plot a heatmap of OJIP parameters}
+\title{Plot a heatmap of JIP-test parameters}
 \usage{
 plot_heatmap_fluorojip(
   res,
   params,
   sample_col = "sample_id",
   group_col = "treatment",
-  scale = "zscore",
-  main = "Normalized JIP-test parameter heatmap"
+  scale = c("zscore", "none", "control_then_zscore"),
+  control_level = "control",
+  cluster = TRUE,
+  palette = "Blue-Red 3",
+  main = "JIP-test parameters",
+  key_label = NULL
 )
 
 plot_param_heatmap(
@@ -19,48 +23,61 @@ plot_param_heatmap(
   params,
   sample_col = "sample_id",
   group_col = "treatment",
-  scale = "zscore",
-  main = "Normalized JIP-test parameter heatmap"
+  scale = c("zscore", "none", "control_then_zscore"),
+  control_level = "control",
+  cluster = TRUE,
+  palette = "Blue-Red 3",
+  main = "JIP-test parameters",
+  key_label = NULL
 )
 }
 \arguments{
-\item{res}{Data frame with OJIP / JIP-test results.}
+\item{res}{Data frame with results, typically from \code{\link[=calc_fluorojip]{calc_fluorojip()}}.}
 
 \item{params}{Character vector of parameters to plot.}
 
-\item{sample_col}{Name of the column with sample IDs.}
+\item{sample_col}{Name of the sample identifier column.}
 
-\item{group_col}{Name of the column with treatment or grouping labels.}
+\item{group_col}{Name of the grouping column, used to label rows and to draw
+a colour bar; ignored if absent.}
 
-\item{scale}{Normalization method. Supported values are \code{"zscore"},
-\code{"none"}, and \code{"control_then_zscore"}.}
+\item{scale}{\code{"zscore"} (standardize each parameter across samples),
+\code{"none"} (plot raw values), or \code{"control_then_zscore"} (divide by the
+mean of \code{control_level}, then standardize).}
 
-\item{main}{Title of the plot.}
+\item{control_level}{Control level of \code{group_col} for
+\code{"control_then_zscore"}.}
+
+\item{cluster}{Logical; order rows and columns by hierarchical clustering
+(Euclidean distance, complete linkage).}
+
+\item{palette}{Diverging palette name passed to \code{\link[grDevices:palettes]{grDevices::hcl.colors()}}.}
+
+\item{main}{Plot title.}
+
+\item{key_label}{Label of the colour key.}
 }
 \value{
-Invisibly returns the object produced by \code{\link[stats:heatmap]{stats::heatmap()}}.
+Invisibly, a list with the plotted matrix (\code{matrix}), row and
+column orders, and the colour limits (\code{zlim}).
 }
 \description{
-Creates a heatmap for selected FluorOJIP / JIP-test parameters across
-samples, with optional normalization.
+Draws a clustered heatmap of selected parameters (columns) across samples
+(rows) with a colour key. With z-score scaling the colour scale is
+symmetric around zero, so equal colour intensities correspond to equal
+standardized deviations above and below the mean.
+}
+\details{
+The heatmap is an exploratory display. With few samples and
+strongly inter-dependent parameters (many JIP-test parameters are
+functions of the same four or five fluorescence values), clustering
+patterns should not be interpreted as statistical evidence.
 }
 \examples{
-df <- data.frame(
-  sample_id = c("S1", "S2", "S3"),
-  treatment = c("control", "stress", "stress"),
-  fo = c(280, 300, 295),
-  fm = c(1200, 1250, 1230),
-  j = c(700, 730, 720),
-  i = c(950, 980, 970),
-  k = c(340, 360, 350),
-  area = c(32000, 35000, 34000)
-)
-
-res <- calc_fluorojip(df)
+res <- calc_fluorojip(example_fluorojip)
 plot_heatmap_fluorojip(
   res,
-  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
-  group_col = "treatment",
-  scale = "zscore"
+  params = c("Fv_Fm", "PI_abs", "ABS_RC", "TRo_RC", "ETo_RC", "DIo_RC"),
+  group_col = "treatment"
 )
 }

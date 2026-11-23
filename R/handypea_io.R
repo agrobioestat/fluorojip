@@ -1,19 +1,26 @@
-#' Read a supported Biolyzer-exported CSV trace table
+#' Read a Biolyzer-exported CSV trace table
 #'
-#' Reads a CSV trace table exported by Biolyzer and prepares it for
-#' downstream OJIP summary extraction.
+#' Reads a wide CSV trace table exported by Biolyzer (Fluoromatics) from
+#' Hansatech Handy-PEA measurements and prepares it for [biolyzer_to_ojip()].
 #'
-#' Although the function name retains the historical `handypea` prefix for
-#' backward compatibility, this workflow is based on supported exported trace
-#' tables rather than direct parsing of proprietary raw instrument files.
+#' The supported layout has one header row whose first cell contains
+#' `Record No` followed by one time value per column, and one row per trace
+#' whose first cell is the trace identifier. Rows labelled `End Of File` and
+#' empty columns are ignored. Time values may be in seconds, milliseconds, or
+#' microseconds.
 #'
-#' @param file Path to the supported Biolyzer-exported CSV trace table.
-#' @return A list with three elements: `times_s`, the extracted time points;
-#'   `ids`, the trace identifiers; and `mat`, a numeric matrix containing the
-#'   fluorescence traces.
-#' @details The function locates the trace header, extracts the time values,
-#'   reads the numeric trace block, removes trailing non-data rows, and returns
-#'   the result in a format suitable for `handypea_to_ojip()`.
+#' `read_handypea_csv()` is the name used in fluorojip 0.1.x and is kept as
+#' an alias: the name refers to the Handy-PEA instrument that produced the
+#' traces, whereas the file layout is the one written by Biolyzer.
+#'
+#' @param file Path to the CSV file.
+#' @return A list with `times_s` (time values as written in the header, kept
+#'   under this name for backward compatibility even if they are not in
+#'   seconds), `ids` (trace identifiers), and `mat` (numeric matrix, one row
+#'   per trace).
+#' @details The function stops with an informative error if the `Record No`
+#'   header or numeric time values cannot be found.
+#' @importFrom utils read.csv
 #' @examples
 #' txt <- c(
 #'   '"Record No",0.00002,0.00027,0.002,0.03,0.10',
@@ -23,181 +30,158 @@
 #' f <- tempfile(fileext = ".csv")
 #' writeLines(txt, f)
 #'
-#' raw <- read_handypea_csv(f)
+#' raw <- read_biolyzer_csv(f)
 #' raw$times_s
 #' dim(raw$mat)
-#' @importFrom utils read.csv
 #' @export
-read_handypea_csv <- function(file) {
+read_biolyzer_csv <- function(file) {
   lines <- readLines(file, warn = FALSE)
 
-  # Find header
   idx <- grep("Record No", lines)[1]
-  if (is.na(idx)) stop("Header 'Record No' not found.")
+  if (is.na(idx)) stop("Header 'Record No' not found; this is not a supported Biolyzer CSV trace table.", call. = FALSE)
 
-  # Extract times manually
-  header_clean <- gsub('"', '', lines[idx])
+  header_clean <- gsub('"', "", lines[idx])
   parts <- strsplit(header_clean, ",")[[1]]
   times_vals <- suppressWarnings(as.numeric(parts))
-  valid_indices <- !is.na(times_vals)
-  times_s <- times_vals[valid_indices]
+  times_s <- times_vals[!is.na(times_vals)]
+  if (length(times_s) == 0) stop("No numeric time values found in the 'Record No' header.", call. = FALSE)
 
-  if (length(times_s) == 0) stop("Error reading times.")
-
-  # Read data
   df <- utils::read.csv(file, skip = idx, header = FALSE, stringsAsFactors = FALSE)
+  df <- df[!grepl("End Of File", df[[1]]), , drop = FALSE]
+  df <- df[, !apply(df, 2, function(x) all(is.na(x) | x == "")), drop = FALSE]
 
-  # Clean unwanted rows
-  df <- df[!grepl("End Of File", df[[1]]), ]
-  df <- df[, !apply(df, 2, function(x) all(is.na(x) | x == ""))]
-
-  # Build matrix
   ids <- as.character(df[[1]])
   mat_data <- as.matrix(df[, -1, drop = FALSE])
-
   if (ncol(mat_data) > length(times_s)) {
-    mat_data <- mat_data[, 1:length(times_s), drop = FALSE]
+    mat_data <- mat_data[, seq_along(times_s), drop = FALSE]
+  }
+  if (ncol(mat_data) < length(times_s)) {
+    stop("Fewer fluorescence columns than time values in the header.", call. = FALSE)
   }
 
-  mode(mat_data) <- "numeric"
+  mat_data <- suppressWarnings(apply(mat_data, 2, as.numeric))
+  if (is.null(dim(mat_data))) mat_data <- matrix(mat_data, nrow = length(ids))
   colnames(mat_data) <- times_s
   rownames(mat_data) <- ids
 
   list(times_s = times_s, ids = ids, mat = mat_data)
 }
 
-# Helper function for integration
-trapz <- function(x, y) {
-  ok <- is.finite(x) & is.finite(y)
-  x <- x[ok]; y <- y[ok]
-  if (length(x) < 2) return(NA_real_)
-  sum((x[-1] - x[-length(x)]) * (y[-1] + y[-length(y)]) / 2)
+#' @rdname read_biolyzer_csv
+#' @export
+read_handypea_csv <- read_biolyzer_csv
+
+#' Read a Biolyzer Excel export (trace data and JIP parameters)
+#'
+#' Reads an Excel workbook exported by Biolyzer containing a `Trace data`
+#' sheet (time in ms in the second column, one column per trace) and,
+#' optionally, a `JIP Parameters` sheet with the values calculated by
+#' Biolyzer. The bundled example returned by
+#' [fluorojip_example_biolyzer_file()] has this layout.
+#'
+#' @param file Path to the `.xls` or `.xlsx` workbook.
+#' @param trace_sheet,jip_sheet Sheet names.
+#' @return A list with `times_ms`, `ids`, `mat` (one row per trace), and
+#'   `jip` (data frame of the Biolyzer parameter sheet with its original
+#'   column names, or `NULL` if the sheet is absent).
+#' @details Rows after the trace block (labelled `Fm`, `Point # Tfm`, and
+#'   `Total Points`) and zero-padded time entries are discarded.
+#' @examples
+#' raw <- read_biolyzer_xls(fluorojip_example_biolyzer_file())
+#' dim(raw$mat)
+#' range(raw$times_ms)
+#' @export
+read_biolyzer_xls <- function(file, trace_sheet = "Trace data", jip_sheet = "JIP Parameters") {
+  sheets <- readxl::excel_sheets(file)
+  if (!trace_sheet %in% sheets) {
+    stop(sprintf("Sheet '%s' not found in the workbook.", trace_sheet), call. = FALSE)
+  }
+  tr <- as.data.frame(suppressMessages(readxl::read_excel(file, sheet = trace_sheet, col_names = FALSE)))
+  first <- trimws(as.character(tr[[1]]))
+  stop_row <- which(first == "Fm")[1]
+  if (is.na(stop_row)) stop_row <- nrow(tr) + 1L
+  rows <- seq.int(3L, stop_row - 1L)
+  times_ms <- suppressWarnings(as.numeric(tr[rows, 2]))
+  vals <- tr[rows, -(1:2), drop = FALSE]
+  mat <- t(vapply(vals, function(x) suppressWarnings(as.numeric(x)), numeric(length(rows))))
+  ids <- trimws(as.character(unlist(tr[1, -(1:2)])))
+  rownames(mat) <- ids
+  keep <- is.finite(times_ms) & times_ms > 0
+  mat <- mat[, keep, drop = FALSE]
+  times_ms <- times_ms[keep]
+  colnames(mat) <- times_ms
+
+  jip <- NULL
+  if (!is.null(jip_sheet) && jip_sheet %in% sheets) {
+    jp <- suppressMessages(readxl::read_excel(file, sheet = jip_sheet, col_names = FALSE))
+    hdr <- as.character(unlist(jp[1, ]))
+    jip <- as.data.frame(jp[-1, , drop = FALSE], stringsAsFactors = FALSE)
+    names(jip) <- hdr
+  }
+  list(times_ms = times_ms, ids = ids, mat = mat, jip = jip)
 }
 
-#' Convert a supported CSV trace export to an OJIP summary table
+#' Convert Biolyzer traces to an OJIP summary table
 #'
-#' Converts a supported exported trace table into an OJIP summary table ready
-#' for downstream FluorOJIP parameter calculation.
+#' Applies [trace_to_ojip()] with the `"biolyzer"` preset (Fo at 20 us, early
+#' O-J point at 270 us, J at 2 ms, I at 30 ms, Fm at the trace maximum) to
+#' traces read by [read_biolyzer_csv()] or [read_biolyzer_xls()].
 #'
-#' Although the function name retains the historical `handypea` prefix for
-#' backward compatibility, the supported import workflow is based on
-#' Biolyzer-exported trace tables.
+#' `handypea_to_ojip()` is the 0.1.x name and is kept as an alias.
 #'
-#' @param x A list object returned by `read_handypea_csv()`.
-#' @return A data frame containing `sample_id`, `t_fm`, `fo`, `k`, `fm`, `j`,
-#'   `i`, `p`, and `area`.
-#' @details Time values are normalized internally to milliseconds so the
-#'   function can target the standard OJIP steps even when exported trace times
-#'   are recorded in seconds, milliseconds, or microseconds.
+#' @param x A list returned by [read_biolyzer_csv()] (elements `times_s` and
+#'   `mat`) or [read_biolyzer_xls()] (elements `times_ms` and `mat`).
+#' @param ... Further arguments passed to [trace_to_ojip()], for example
+#'   `tolerance_ms`, `targets_ms`, or `step_method`.
+#' @return The data frame returned by [trace_to_ojip()].
 #' @examples
 #' raw <- list(
 #'   times_s = c(0.00002, 0.00027, 0.002, 0.03, 0.10),
 #'   mat = matrix(
-#'     c(
-#'       280, 340, 700, 950, 1200,
-#'       300, 360, 730, 980, 1250
-#'     ),
-#'     nrow = 2,
-#'     byrow = TRUE,
+#'     c(280, 340, 700, 950, 1200,
+#'       300, 360, 730, 980, 1250),
+#'     nrow = 2, byrow = TRUE,
 #'     dimnames = list(c("S1", "S2"), NULL)
 #'   )
 #' )
-#'
-#' ojip <- handypea_to_ojip(raw)
-#' ojip
+#' biolyzer_to_ojip(raw)
 #' @export
-handypea_to_ojip <- function(x) {
-  times <- x$times_s
-  mat <- x$mat
-  ids <- rownames(mat)
-
-  # Normalize time to milliseconds so we can support raw traces exported
-  # in seconds (e.g. 0.0003), milliseconds (e.g. 0.27), or microseconds
-  # (e.g. 270) while still targeting the standard OJIP steps.
-  infer_times_ms <- function(times) {
-    targets_ms <- c(0.02, 0.27, 2, 30)
-    score <- function(factor) {
-      converted <- times * factor
-      sum(vapply(targets_ms, function(target) min(abs(converted - target), na.rm = TRUE), numeric(1)))
-    }
-
-    candidates <- c(0.001, 1, 1000)
-    best_factor <- candidates[which.min(vapply(candidates, score, numeric(1)))]
-    times * best_factor
+biolyzer_to_ojip <- function(x, ...) {
+  args <- list(...)
+  if (!is.null(x$times_ms)) {
+    times <- x$times_ms
+    if (is.null(args$time_unit)) args$time_unit <- "ms"
+  } else {
+    times <- x$times_s
   }
-
-  pick_idx <- function(times_ms, target_ms) {
-    which.min(abs(times_ms - target_ms))
-  }
-
-  times_ms <- infer_times_ms(times)
-
-  # Key indices for O (0.02 ms), K (0.27 ms), J (2 ms) and I (30 ms)
-  idx_o <- pick_idx(times_ms, 0.02)
-  idx_k <- pick_idx(times_ms, 0.27)
-  idx_j <- pick_idx(times_ms, 2)
-  idx_i <- pick_idx(times_ms, 30)
-
-  # Fo is taken from the point nearest 0.02 ms (20 us). This also works
-  # when the first available point is slightly later, such as 0.05 ms.
-  Fo <- mat[, idx_o]
-
-  # Fm, time to Fm, and Area
-  Fm <- apply(mat, 1, max, na.rm = TRUE)
-  t_fm <- numeric(nrow(mat))
-  area <- numeric(nrow(mat))
-
-  for (r in 1:nrow(mat)) {
-    ix_fm <- which.max(mat[r, ])
-    if (length(ix_fm) == 0) ix_fm <- length(times_ms)
-    t_fm[r] <- times_ms[ix_fm]
-    t_sub <- times_ms[1:ix_fm]
-    f_sub <- mat[r, 1:ix_fm]
-    area[r] <- trapz(t_sub, Fm[r] - f_sub)
-  }
-
-  data.frame(
-    sample_id = ids,
-    t_fm = t_fm,
-    fo = Fo,
-    k = mat[, idx_k],
-    fm = Fm,
-    j = mat[, idx_j],
-    i = mat[, idx_i],
-    p = Fm,
-    area = area,
-    stringsAsFactors = FALSE
-  )
+  if (is.null(args$preset)) args$preset <- "biolyzer"
+  do.call(trace_to_ojip, c(list(times = times, mat = x$mat), args))
 }
 
-#' Calculate FluorOJIP parameters from a supported exported table
+#' @rdname biolyzer_to_ojip
+#' @export
+handypea_to_ojip <- biolyzer_to_ojip
+
+#' Calculate JIP-test parameters from a Biolyzer export
 #'
-#' Reads a supported exported trace table, derives an OJIP summary, and then
-#' computes FluorOJIP parameters.
+#' Reads a Biolyzer CSV trace table or Excel workbook, extracts the OJIP
+#' summary with [biolyzer_to_ojip()], and calls [calc_fluorojip()].
+#' `calc_fluorojip_handypea()` is the 0.1.x name and is kept as an alias.
 #'
-#' Although the function name retains the historical `handypea` prefix for
-#' backward compatibility, the supported import workflow is based on
-#' Biolyzer-exported trace tables.
-#'
-#' @param file Path to the supported Biolyzer-exported CSV trace table.
-#' @return A data frame with FluorOJIP parameters returned by
-#'   `calc_fluorojip()`.
-#' @details Typical workflow:\cr
-#'   `read_handypea_csv()` -> `handypea_to_ojip()` -> `calc_fluorojip()`.
+#' @param file Path to a Biolyzer CSV trace table (`.csv`, `.txt`) or Excel
+#'   export (`.xls`, `.xlsx`).
+#' @param ... Further arguments passed to [trace_to_ojip()].
+#' @return The data frame returned by [calc_fluorojip()].
 #' @examples
-#' txt <- c(
-#'   '"Record No",0.00002,0.00027,0.002,0.03,0.10',
-#'   '"S1",280,340,700,950,1200',
-#'   '"S2",300,360,730,980,1250'
-#' )
-#' f <- tempfile(fileext = ".csv")
-#' writeLines(txt, f)
-#'
-#' res <- calc_fluorojip_handypea(f)
-#' res[, c("sample_id", "Fv_Fm", "PI_abs")]
+#' res <- calc_fluorojip_biolyzer(fluorojip_example_biolyzer_file())
+#' res[, c("sample_id", "Fv_Fm", "PI_abs", "qc_flags")]
 #' @export
-calc_fluorojip_handypea <- function(file) {
-  raw <- read_handypea_csv(file)
-  df_summ <- handypea_to_ojip(raw)
-  calc_fluorojip(df_summ)
+calc_fluorojip_biolyzer <- function(file, ...) {
+  ext <- tolower(tools::file_ext(file))
+  raw <- if (ext %in% c("xls", "xlsx")) read_biolyzer_xls(file) else read_biolyzer_csv(file)
+  calc_fluorojip(biolyzer_to_ojip(raw, ...))
 }
+
+#' @rdname calc_fluorojip_biolyzer
+#' @export
+calc_fluorojip_handypea <- calc_fluorojip_biolyzer

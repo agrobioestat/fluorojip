@@ -4,44 +4,49 @@
 \alias{read_fluorpen_xlsx}
 \title{Read a FluorPen Excel export}
 \usage{
-read_fluorpen_xlsx(file, sheet = 1)
+read_fluorpen_xlsx(file, sheet = 1, repair_decimals = TRUE)
 }
 \arguments{
-\item{file}{Path to the FluorPen \code{.xlsx} file.}
+\item{file}{Path to the \code{.xlsx} (or \code{.xls}) workbook.}
 
-\item{sheet}{Sheet name or numeric index. Defaults to the first sheet.}
+\item{sheet}{Sheet name or index. Defaults to the first sheet.}
+
+\item{repair_decimals}{Logical. Some workbooks are produced by opening the
+FluorPen text export in a spreadsheet configured with a locale in which
+\code{"."} is the thousands separator; values such as \code{1.017} are then stored
+as \code{1017}. When \code{TRUE} (default), footer values of ratio-type parameters
+that contain no decimal mark and are >= 1000 are divided by 1000 (the
+FluorPen export uses three decimals). The number of repaired cells is
+reported in a message and recorded in \code{summary_repaired}.}
 }
 \value{
-A list with metadata, the raw trace matrix, and the vendor summary:
-\itemize{
-\item \code{sample_id} measurement identifiers taken from the header row
-\item \code{measurement_time} acquisition timestamps
-\item \code{protocol_id} protocol labels such as \code{OJIP}
-\item \code{times_us} raw time grid in microseconds
-\item \code{times_ms} raw time grid converted to milliseconds
-\item \code{mat} numeric matrix with one row per sample and one column per time
-\item \code{summary_raw} footer summary as imported from the workbook
-\item \code{summary_numeric} footer summary converted to numeric values where possible
-}
+A list with \code{sample_id}, \code{measurement_time}, \code{protocol_id},
+\code{times_us}, \code{times_ms}, \code{mat} (one row per measurement, raw signal
+including the background point), \code{summary_raw} (footer as text),
+\code{summary_numeric} (footer converted to numbers, after optional repair),
+and \code{summary_repaired} (logical matrix of repaired cells).
 }
 \description{
-Reads a FluorPen \code{.xlsx} workbook exported in a wide vendor layout, where
-columns represent measurements, the first column stores the OJIP time grid,
-and footer rows contain vendor-calculated JIP-test parameters.
+Reads an OJIP export from the FluorPen software (Photon Systems
+Instruments) saved as an Excel workbook: one measurement per column, the
+first column holding the time grid (us), header rows \code{index}/\code{time}/\code{id},
+the fluorescence trace, and footer rows starting at \code{Fm} with the
+parameters calculated by the FluorPen software.
 }
 \details{
-This function reads a supported FluorPen workbook and prepares its trace and
-footer summary data for downstream OJIP conversion, validation, and
-comparison workflows.
-
-A typical workflow is:
-\code{read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)}.
+The function stops if the \code{index} header row, the \code{Fm} footer row,
+or a numeric time grid cannot be found. Typical workflow:
+\code{read_fluorpen_xlsx() -> fluorpen_to_ojip() -> calc_fluorojip()}.
 }
 \examples{
 xlsx <- system.file("extdata", "FluorPen_test.xlsx", package = "fluorojip")
 if (nzchar(xlsx)) {
   raw <- read_fluorpen_xlsx(xlsx)
-  names(raw)
   dim(raw$mat)
+  head(raw$times_us)
 }
+}
+\references{
+Photon Systems Instruments (2023). FluorPen and Monitoring Pen
+Manual, version 2023/07. PSI, Drasov, Czech Republic.
 }

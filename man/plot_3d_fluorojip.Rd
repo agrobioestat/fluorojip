@@ -4,72 +4,77 @@
 \alias{plot_3d_fluorojip}
 \alias{plot_param_3d}
 \alias{plot_param_surface3d}
-\title{Plot a 3D scatter plot of OJIP parameters}
+\title{Plot a 3D scatter plot of JIP-test parameters}
 \usage{
 plot_3d_fluorojip(
   res,
-  params = c("Fv_Fm", "PI_abs", "area"),
+  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
   group_col = "treatment",
-  normalize = TRUE
+  normalize = TRUE,
+  colors = NULL,
+  angle = 45,
+  main = NULL,
+  legend_pos = "topleft"
 )
 
 plot_param_3d(
   res,
-  params = c("Fv_Fm", "PI_abs", "area"),
+  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
   group_col = "treatment",
-  normalize = TRUE
+  normalize = TRUE,
+  colors = NULL,
+  angle = 45,
+  main = NULL,
+  legend_pos = "topleft"
 )
 
 plot_param_surface3d(
   res,
-  params = c("Fv_Fm", "PI_abs", "area"),
+  params = c("Fv_Fm", "PI_abs", "ABS_RC"),
   group_col = "treatment",
-  normalize = TRUE
+  normalize = TRUE,
+  colors = NULL,
+  angle = 45,
+  main = NULL,
+  legend_pos = "topleft"
 )
 }
 \arguments{
-\item{res}{Data frame with OJIP / JIP-test results.}
+\item{res}{Data frame with results, typically from \code{\link[=calc_fluorojip]{calc_fluorojip()}}.}
 
-\item{params}{Character vector of exactly 3 parameters to plot.}
+\item{params}{Character vector of exactly three parameter names.}
 
-\item{group_col}{Name of the column with treatment or grouping labels.}
+\item{group_col}{Grouping column used for colours, symbols, and legend.}
 
-\item{normalize}{Logical indicating whether selected parameters should be
-z-score normalized before plotting.}
+\item{normalize}{Logical; z-score each parameter before plotting. Axes are
+then labelled "(z)" and are not in physiological units.}
+
+\item{colors}{Optional vector of colours, one per group (defaults to the
+colour-blind-safe Okabe-Ito palette).}
+
+\item{angle}{Viewing angle passed to \code{\link[scatterplot3d:scatterplot3d]{scatterplot3d::scatterplot3d()}}.}
+
+\item{main}{Plot title.}
+
+\item{legend_pos}{Legend position passed to \code{\link[graphics:legend]{graphics::legend()}}.}
 }
 \value{
 Invisibly returns the object produced by
 \code{\link[scatterplot3d:scatterplot3d]{scatterplot3d::scatterplot3d()}}.
 }
 \description{
-Creates an exploratory 3D scatter plot for exactly three selected
-FluorOJIP / JIP-test parameters.
+Exploratory 3D scatter plot of exactly three parameters, coloured and
+shaped by group, with a legend. Requires the suggested package
+\pkg{scatterplot3d}.
 }
 \details{
-\code{plot_param_3d()} and \code{plot_param_surface3d()} are aliases of
-\code{plot_3d_fluorojip()}. The name \code{plot_param_surface3d()} is retained for
-backward compatibility, although the function produces a 3D scatter plot
-rather than an interpolated surface.
+\code{plot_param_3d()} and \code{plot_param_surface3d()} are aliases kept
+for backward compatibility (the latter draws a scatter plot, not a
+surface).
 }
 \examples{
 if (requireNamespace("scatterplot3d", quietly = TRUE)) {
-  df <- data.frame(
-    sample_id = c("S1", "S2", "S3"),
-    treatment = c("control", "stress", "stress"),
-    fo = c(280, 300, 295),
-    fm = c(1200, 1250, 1230),
-    j = c(700, 730, 720),
-    i = c(950, 980, 970),
-    k = c(340, 360, 350),
-    area = c(32000, 35000, 34000)
-  )
-
-  res <- calc_fluorojip(df)
-  plot_3d_fluorojip(
-    res,
-    params = c("Fv_Fm", "PI_abs", "ABS_RC"),
-    group_col = "treatment",
-    normalize = TRUE
-  )
+  res <- calc_fluorojip(example_fluorojip)
+  plot_3d_fluorojip(res, params = c("Fv_Fm", "PI_abs", "ABS_RC"))
 }
 }

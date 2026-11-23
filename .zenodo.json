@@ -1,0 +1,20 @@
+{
+  "title": "fluorojip: Analysis of Chlorophyll a Fluorescence Transient Parameters (version 0.2.0)",
+  "upload_type": "software",
+  "description": "R package for transparent extraction, calculation, and validation of chlorophyll a fluorescence OJIP (JIP-test) parameters. This archive contains the package source of the release described in the Royal Society Open Science article, the bundled reference files (inst/extdata), the validation script (validation/run_validation.R), and the test suite.",
+  "creators": [
+    {"name": "da Silva Ribeiro, João Everthon", "orcid": "0000-0002-1937-0066",
+     "affiliation": "Center for Agricultural, Environmental, and Biological Sciences, Universidade Federal do Recôncavo da Bahia, Brazil"},
+    {"name": "da Silva, Toshik Iarley", "orcid": "0000-0003-0704-2046",
+     "affiliation": "Center for Agricultural, Environmental, and Biological Sciences, Universidade Federal do Recôncavo da Bahia, Brazil"},
+    {"name": "Maldonado Rodriguez, Ronald", "orcid": "0000-0001-7023-7482",
+     "affiliation": "Fluoromatics Laboratory, Onex, Geneva, Switzerland"}
+  ],
+  "license": "GPL-3.0-only",
+  "keywords": ["chlorophyll fluorescence", "JIP-test", "OJIP", "photosynthesis", "R package", "reproducible research"],
+  "related_identifiers": [
+    {"identifier": "https://CRAN.R-project.org/package=fluorojip", "relation": "isVersionOf", "scheme": "url"}
+  ],
+  "version": "0.2.0",
+  "language": "eng"
+}

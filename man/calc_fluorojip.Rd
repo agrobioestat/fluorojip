@@ -4,50 +4,127 @@
 \alias{calc_fluorojip}
 \title{Compute chlorophyll a fluorescence OJIP / JIP-test parameters}
 \usage{
-calc_fluorojip(df)
+calc_fluorojip(df, mo_interval_ms = 0.25, digits = 6)
 }
 \arguments{
-\item{df}{A data frame containing fluorescence summary columns. At minimum,
-provide Fo (\code{fo} or \code{o}), Fm (\code{fm} or \code{p}), J (\code{j} or \code{fj}), and I (\code{i}
-or \code{fi}). Reliable \code{Mo}, \code{N}, \code{PI_abs}, and RC-based fluxes require a
-K-step / 300 us-equivalent measurement supplied as \code{k}, \code{fk}, \code{f300}, or
-\code{f300us}.}
+\item{df}{A data frame with one row per measurement. Required columns:
+minimum fluorescence Fo (\code{fo} or \code{o}), maximum fluorescence Fm (\code{fm} or
+\code{p}), fluorescence at the J step (\code{j} or \code{fj}) and at the I step (\code{i} or
+\code{fi}). Optional columns: the early O-J point used for the initial slope
+(preferred name \code{f300us}; accepted aliases \code{f300}, \code{f_300us}, \code{f_300_us},
+\code{fk}, and the backward-compatible \code{k}) and the area above the transient
+(\code{area}). All other columns (sample identifiers, treatments, metadata) are
+returned unchanged.}
+
+\item{mo_interval_ms}{Time interval, in milliseconds, between the Fo point
+and the early O-J point used for the initial slope \code{Mo}. The JIP-test
+convention uses 0.25 ms (for example Fo at 20 us with F at 270 us, or Fo
+at 50 us with F at 300 us), which gives the familiar factor 4 in
+\code{Mo = 4 (F300us - Fo) / (Fm - Fo)}. Change it only if the two points used
+in your data are separated by a different interval.}
+
+\item{digits}{Number of decimal places used to round calculated columns.
+Use \code{NULL} to return unrounded values.}
 }
 \value{
-A data frame containing the original input columns plus calculated
-FluorOJIP / JIP-test parameters.
+A data frame containing all input columns followed by the
+calculated parameters listed in \emph{Details} and a \code{qc_flags} column. Rows
+whose inputs fail the validity checks receive \code{NA} for the affected
+parameters and a warning is issued.
 }
 \description{
-Computes chlorophyll a fluorescence OJIP / JIP-test parameters from
-fluorescence summary data.
+Computes JIP-test parameters from a table of fluorescence summary values
+(one row per measurement). The function implements the equations listed in
+the \emph{Details} section exactly as written; it does not inspect raw traces,
+and it never estimates a missing input from other transient points.
 }
 \details{
-The current implementation follows a summary-input workflow. Primary terms
-such as \code{phi_Po}, \code{Vj}, \code{Vi}, \code{psi_Eo}, \code{phi_Eo}, \code{Mo}, and \code{PI_abs} are
-computed explicitly from the supplied fluorescence summary values.
+\strong{Notation.} Fo, Fj, Fi, Fm are fluorescence intensities (instrument
+units) at O, J, I, and P; F300us is the early O-J point (often called the
+K-step position, but used here only for the initial slope); \code{area} is the
+area between the transient and the Fm level from Fo to the time of Fm.
 
-\code{Mo} is derived from the K-step / F300 region using the standard relation
-\code{4 * (F300 - Fo) / (Fm - Fo)}. If a K-step / 300 us-equivalent value is not
-available, the function does not attempt to guess \code{Mo}; instead, \code{Mo}, \code{N},
-RC-based fluxes, and \code{PI_abs} are returned as \code{NA} with a warning.
+\strong{Equations implemented} (output column = formula):
+\itemize{
+\item \code{Fv} = Fm - Fo
+\item \code{phi_Po} (= \code{Fv_Fm}) = Fv / Fm = TRo/ABS
+\item \code{phi_Do} = 1 - phi_Po = Fo / Fm
+\item \code{Vj} = (Fj - Fo) / Fv;  \code{Vi} = (Fi - Fo) / Fv
+\item \code{Mo} = ((F300us - Fo) / Fv) / \code{mo_interval_ms} (= 4 (F300us - Fo) / Fv
+with the default 0.25 ms), units ms^-1
+\item \code{psi_Eo} = 1 - Vj;  \code{phi_Eo} = phi_Po psi_Eo
+\item \code{Sm} = area / Fv (time units of \code{area});  \code{N} = Sm Mo / Vj
+\item \code{TRo_RC} = Mo / Vj;  \code{ABS_RC} = TRo_RC / phi_Po;
+\code{ETo_RC} = TRo_RC psi_Eo;  \code{DIo_RC} = ABS_RC - TRo_RC
+\item \code{RC_ABS} = 1 / ABS_RC = phi_Po Vj / Mo
+\item \code{PI_abs} = RC_ABS (phi_Po / (1 - phi_Po)) (psi_Eo / (1 - psi_Eo))
+\item Cross-section fluxes at t = 0 (\verb{*_CSo}): \code{ABS_CSo} = Fo,
+\code{TRo_CSo} = phi_Po Fo, \code{ETo_CSo} = phi_Eo Fo,
+\code{DIo_CSo} = ABS_CSo - TRo_CSo, \code{RC_CSo} = phi_Po (Vj / Mo) Fo
+\item Cross-section fluxes at t = tFm (\verb{*_CSm}): \code{ABS_CSm} = Fm,
+\code{TRo_CSm} = phi_Po Fm, \code{ETo_CSm} = phi_Eo Fm,
+\code{DIo_CSm} = ABS_CSm - TRo_CSm
+}
+The specific fluxes per reaction centre are dimensionless ratios in the
+JIP-test framework and \code{PI_abs} is dimensionless. Cross-section fluxes use
+Fo or Fm as a proxy for the absorption flux per excited cross section and
+therefore carry the arbitrary units of the instrument signal: they can be
+compared only among samples measured with the same instrument and settings.
 
-The cross-section outputs \code{ABS_CSm}, \code{TRo_CSm}, \code{ETo_CSm}, and \code{DIo_CSm}
-are returned as operational package outputs for internal comparison. They are
-computed consistently from the supplied summary data, but they should be
-described carefully if compared against instrument-specific phenomenological
-flux conventions.
+\strong{Missing and invalid inputs.}
+\itemize{
+\item Missing required columns (Fo, Fm, Fj, Fi) stop the function.
+\item If no F300us column is supplied, \code{Mo}, \code{N}, all RC-based fluxes,
+\code{RC_ABS}, \code{RC_CSo}, and \code{PI_abs} are returned as \code{NA} with a warning.
+They are never estimated from later points.
+\item Rows with non-finite values, Fo < 0, or Fm <= Fo receive \code{NA} for
+all derived parameters. Fj, Fi, or F300us outside the interval
+[Fo, Fm] make the parameters that depend on them \code{NA}.
+\item If \code{area} is absent, \code{Sm} and \code{N} are \code{NA}.
+}
+
+\strong{Quality flags.} The \code{qc_flags} column contains \code{"ok"} or a
+semicolon-separated list of: \code{fo_fm_invalid}, \code{fj_out_of_range},
+\code{fi_out_of_range}, \code{f300us_out_of_range}, \code{f300us_missing},
+\code{non_monotonic} (Fo <= F300us <= Fj <= Fi <= Fm violated), and any flags
+already present in an input \code{qc_flags} column (for example those produced by
+\code{\link[=trace_to_ojip]{trace_to_ojip()}}). Flags describe the numerical inputs only; they cannot
+establish that the measurement itself (dark adaptation, saturating
+excitation, absence of artefacts) was adequate.
+
+Equations follow Strasser et al. (2000, 2004) and the terminology of
+Tsimilli-Michael (2020).
 }
 \examples{
 df <- data.frame(
   sample_id = c("S1", "S2"),
   fo = c(280, 300),
-  fm = c(1200, 1250),
+  f300us = c(340, 360),
   j = c(700, 730),
   i = c(950, 980),
-  k = c(340, 360),
+  fm = c(1200, 1250),
   area = c(32000, 35000)
 )
 
 res <- calc_fluorojip(df)
-res[, c("sample_id", "Fv_Fm", "PI_abs")]
+res[, c("sample_id", "Fv_Fm", "Mo", "ABS_RC", "PI_abs", "qc_flags")]
+
+# Without the early O-J point, slope-dependent outputs are NA (with a warning)
+res2 <- suppressWarnings(calc_fluorojip(df[, c("sample_id", "fo", "j", "i", "fm")]))
+res2[, c("sample_id", "Fv_Fm", "Mo", "PI_abs", "qc_flags")]
+}
+\references{
+Strasser RJ, Srivastava A, Tsimilli-Michael M (2000). The fluorescence
+transient as a tool to characterize and screen photosynthetic samples. In:
+Yunus M, Pathre U, Mohanty P (eds) Probing Photosynthesis: Mechanisms,
+Regulation and Adaptation. Taylor and Francis, London, pp 445-483.
+
+Strasser RJ, Tsimilli-Michael M, Srivastava A (2004). Analysis of the
+chlorophyll a fluorescence transient. In: Papageorgiou GC, Govindjee (eds)
+Chlorophyll a Fluorescence: A Signature of Photosynthesis. Springer,
+Dordrecht, pp 321-362. \doi{10.1007/978-1-4020-3218-9_12}
+
+Tsimilli-Michael M (2020). Revisiting JIP-test: an educative review on
+concepts, assumptions, approximations, definitions and terminology.
+Photosynthetica 58:275-292. \doi{10.32615/ps.2019.150}
 }

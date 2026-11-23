@@ -1,120 +1,81 @@
-fluorojip
+# fluorojip
+
 ![CRAN status](https://www.r-pkg.org/badges/version/fluorojip)
 ![License: GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)
 ![R](https://img.shields.io/badge/R-%3E%3D%204.1.0-blue.svg)
-`fluorojip` is an R package for reproducible analysis of chlorophyll a fluorescence OJIP transients and JIP-test parameters.
-The package computes fluorescence-derived parameters from summary data, supports selected vendor-exported trace workflows, provides normalization and visualization helpers, and includes an optional Shiny interface for interactive analysis.
-Installation
-Install the released version from CRAN:
+
+`fluorojip` is an R package for reproducible calculation of chlorophyll *a*
+fluorescence (OJIP) transient parameters of the JIP-test. It converts
+exported fluorescence traces into OJIP summary values with documented,
+instrument-specific rules, computes the parameters with the equations listed
+in `?calc_fluorojip`, flags problematic inputs, compares results with values
+exported by instrument software, and provides plots and a Shiny interface.
+
+## Installation
+
 ```r
 install.packages("fluorojip")
 ```
-Load the package:
+
+## From a summary table
+
 ```r
 library(fluorojip)
+res <- calc_fluorojip(example_fluorojip)
+res[, c("sample_id", "treatment", "Fv_Fm", "Mo", "ABS_RC", "PI_abs", "qc_flags")]
 ```
-Main features
-calculation of OJIP/JIP-test parameters from fluorescence summary tables;
-support for common fluorescence descriptors such as `fo`, `fm`, `j`, `i`, `k`, and `area`;
-conservative handling of parameters that require K-step or 300-us-equivalent fluorescence information;
-helper functions for supported Biolyzer-exported CSV trace tables;
-helper functions for supported FluorPen Excel workbooks;
-normalization of JIP-test parameter tables using z-score, min-max, control ratio, or control-then-z-score approaches;
-heatmap and three-dimensional exploratory visualization;
-export of normalized tables for downstream analysis;
-bundled Shiny application for interactive workflows.
-Basic example
-```r
-library(fluorojip)
 
-df <- data.frame(
-  sample_id = c("S1", "S2", "S3"),
-  treatment = c("control", "stress", "stress"),
-  fo = c(280, 300, 295),
-  fm = c(1200, 1250, 1230),
-  j = c(700, 730, 720),
-  i = c(950, 980, 970),
-  k = c(340, 360, 350),
-  area = c(32000, 35000, 34000)
-)
+The early O-J point is supplied as `f300us` (the 0.1.x name `k` is still
+accepted). Without it, `Mo`, the specific fluxes per reaction centre, and
+`PI_abs` are returned as `NA`.
 
-res <- calc_fluorojip(df)
+## From exported traces
 
-res[, c("sample_id", "treatment", "Fv_Fm", "PI_abs")]
-```
-Normalized parameter table
 ```r
-tab <- normalized_jiptable(
-  res,
-  params = c("Fv_Fm", "PI_abs", "ABS_RC", "TRo_RC", "ETo_RC", "DIo_RC"),
-  group_col = "treatment",
-  normalize = "zscore",
-  output = "wide"
-)
+# Biolyzer (Handy-PEA traces): CSV trace table or Excel export
+raw  <- read_biolyzer_xls(fluorojip_example_biolyzer_file())
+ojip <- biolyzer_to_ojip(raw)           # preset "biolyzer": 20 us, 270 us, 2 ms, 30 ms
+res  <- calc_fluorojip(ojip)
 
-tab
+# FluorPen OJIP workbook (Photon Systems Instruments)
+xlsx <- system.file("extdata", "FluorPen_test.xlsx", package = "fluorojip")
+res_fp <- calc_fluorojip_fluorpen(xlsx) # preset "fluorpen": background subtracted, 50 us, 300 us, 2 ms, 30 ms
+
+# Any other trace: choose or define the time targets explicitly
+ojip <- trace_to_ojip(times, mat, preset = "handypea", time_unit = "ms",
+                      targets_ms = c(fo = 0.02, f300us = 0.27, j = 2, i = 30))
 ```
-Heatmap
+
+Each extracted table records the times actually used and a `qc_flags` column
+(for example `fm_at_last_point`, `fm_before_i`, `fo_time_out_of_tolerance`).
+Use `plot_ojip_trace()` to inspect the curves and the extracted points.
+
+## Agreement with instrument software
+
 ```r
-plot_heatmap_fluorojip(
-  res,
-  params = c("Fv_Fm", "PI_abs", "ABS_RC", "TRo_RC", "ETo_RC", "DIo_RC"),
-  group_col = "treatment",
-  scale = "zscore"
-)
+validate_biolyzer(mode = "engine")$metrics
+validate_fluorpen(xlsx, mode = "importer")$metrics
 ```
-Three-dimensional exploratory plot
+
+## Exploration, export, and Shiny
+
 ```r
-if (requireNamespace("scatterplot3d", quietly = TRUE)) {
-  plot_3d_fluorojip(
-    res,
-    params = c("Fv_Fm", "PI_abs", "ABS_RC"),
-    group_col = "treatment",
-    normalize = TRUE
-  )
-}
-```
-Supported import workflows
-Summary-table workflow
-```r
-res <- calc_fluorojip_file("summary_table.csv", sep = ";", dec = ".")
-```
-Biolyzer-exported CSV workflow
-```r
-raw <- read_handypea_csv("biolyzer_export.csv")
-ojip <- handypea_to_ojip(raw)
-res <- calc_fluorojip(ojip)
-```
-or directly:
-```r
-res <- calc_fluorojip_handypea("biolyzer_export.csv")
-```
-FluorPen Excel workflow
-```r
-raw <- read_fluorpen_xlsx("FluorPen_export.xlsx")
-ojip <- fluorpen_to_ojip(raw)
-res <- calc_fluorojip(ojip)
-```
-or directly:
-```r
-res <- calc_fluorojip_fluorpen("FluorPen_export.xlsx")
-```
-Shiny application
-The package includes a Shiny interface for users who prefer an interactive workflow:
-```r
+plot_heatmap_fluorojip(res, params = c("Fv_Fm", "Vj", "Mo", "ABS_RC", "DIo_RC", "PI_abs"))
+tab <- normalized_jiptable(res, params = c("Fv_Fm", "PI_abs"), normalize = "zscore")
 run_fluorojip_app()
 ```
-Documentation
-Package documentation is available on CRAN:
-https://CRAN.R-project.org/package=fluorojip
-Citation
-To cite the package in publications, use:
+
+## Scope
+
+`fluorojip` works after acquisition. It does not check dark adaptation,
+saturation of the excitation pulse, detector saturation, or other measurement
+artefacts, and normalized values or clustering displays are exploratory.
+
+## Citation
+
 ```r
 citation("fluorojip")
 ```
-License
-This package is distributed under the GPL-3 license.
-Authors
-Joao Everthon da Silva Ribeiro,
-Toshik Iarley da Silva,
-Ronald Maldonado Rodriguez
+
+License: GPL-3. Authors: Joao Everthon da Silva Ribeiro, Toshik Iarley da
+Silva, Ronald Maldonado Rodriguez.

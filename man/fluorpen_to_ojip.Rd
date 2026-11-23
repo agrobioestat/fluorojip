@@ -4,31 +4,30 @@
 \alias{fluorpen_to_ojip}
 \title{Convert FluorPen traces to an OJIP summary table}
 \usage{
-fluorpen_to_ojip(x)
+fluorpen_to_ojip(x, ...)
 }
 \arguments{
 \item{x}{A list returned by \code{\link[=read_fluorpen_xlsx]{read_fluorpen_xlsx()}}.}
+
+\item{...}{Further arguments passed to \code{\link[=trace_to_ojip]{trace_to_ojip()}} (for example
+\code{preset}, \code{background}, or \code{tolerance_ms}).}
 }
 \value{
-A data frame containing one row per sample with OJIP summary values
-ready for \code{\link[=calc_fluorojip]{calc_fluorojip()}}.
+The data frame returned by \code{\link[=trace_to_ojip]{trace_to_ojip()}}, plus
+\code{measurement_time}, \code{protocol_id}, and any light-setting columns found in
+the footer.
 }
 \description{
-Convert FluorPen traces to an OJIP summary table
-}
-\details{
-This helper converts the FluorPen trace matrix into the fluorescence summary
-structure expected by the core calculation workflow, including the O, K, J,
-I, P, and area-related quantities extracted from the trace.
-
-A typical workflow is:
-\code{read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)}.
+Applies \code{\link[=trace_to_ojip]{trace_to_ojip()}} with the \code{"fluorpen"} preset: the first exported
+point is treated as the background reading and subtracted, Fo is the
+nominal 50 us point (exported sample labelled 41 us), the early O-J point
+is 300 us, J is 2 ms, I is 30 ms, and Fm is the trace maximum. Measurement
+time, protocol, and light settings stored in the workbook are appended.
 }
 \examples{
 xlsx <- system.file("extdata", "FluorPen_test.xlsx", package = "fluorojip")
 if (nzchar(xlsx)) {
-  raw <- read_fluorpen_xlsx(xlsx)
-  ojip <- fluorpen_to_ojip(raw)
-  head(ojip)
+  ojip <- fluorpen_to_ojip(read_fluorpen_xlsx(xlsx))
+  head(ojip[, c("sample_id", "fo", "f300us", "j", "i", "fm", "qc_flags")])
 }
 }

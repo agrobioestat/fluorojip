@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_fluorojip.R
 \name{calc_fluorojip_file}
 \alias{calc_fluorojip_file}
-\title{Read a summary table and compute FluorOJIP parameters}
+\title{Read a summary table and compute JIP-test parameters}
 \usage{
 calc_fluorojip_file(file, sep = ";", dec = ".", ...)
 }
@@ -13,27 +13,24 @@ calc_fluorojip_file(file, sep = ";", dec = ".", ...)
 
 \item{dec}{Decimal mark used in the input file. Defaults to \code{"."}.}
 
-\item{...}{Additional arguments passed to \code{\link[utils:read.table]{utils::read.csv()}}.}
+\item{...}{Additional arguments passed to \code{\link[=calc_fluorojip]{calc_fluorojip()}} (for example
+\code{mo_interval_ms}).}
 }
 \value{
-A data frame containing the original input columns plus calculated
-FluorOJIP / JIP-test parameters.
+The data frame returned by \code{\link[=calc_fluorojip]{calc_fluorojip()}}.
 }
 \description{
-Read a summary table and compute FluorOJIP parameters
-}
-\details{
-This is a convenience wrapper for summary-input workflows:
-\code{read.csv(file, ...) -> calc_fluorojip(df)}.
+Convenience wrapper: \code{utils::read.csv(file, ...)} followed by
+\code{\link[=calc_fluorojip]{calc_fluorojip()}}.
 }
 \examples{
 df <- data.frame(
   sample_id = c("S1", "S2"),
   fo = c(280, 300),
-  fm = c(1200, 1250),
+  f300us = c(340, 360),
   j = c(700, 730),
   i = c(950, 980),
-  k = c(340, 360),
+  fm = c(1200, 1250),
   area = c(32000, 35000)
 )
 

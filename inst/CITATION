@@ -1,0 +1,18 @@
+bibentry(
+  bibtype = "Manual",
+  title = "{fluorojip}: Analysis of Chlorophyll a Fluorescence Transient Parameters",
+  author = c(
+    person(c("Joao", "Everthon"), "da Silva Ribeiro"),
+    person(c("Toshik", "Iarley"), "da Silva"),
+    person(c("Ronald", "Maldonado"), "Rodriguez")
+  ),
+  year = "2026",
+  note = paste("R package version", meta$Version),
+  doi = "10.32614/CRAN.package.fluorojip",
+  url = "https://CRAN.R-project.org/package=fluorojip",
+  textVersion = paste0(
+    "da Silva Ribeiro JE, da Silva TI, Maldonado Rodriguez R (2026). ",
+    "fluorojip: Analysis of Chlorophyll a Fluorescence Transient Parameters. ",
+    "R package version ", meta$Version, ". doi:10.32614/CRAN.package.fluorojip"
+  )
+)

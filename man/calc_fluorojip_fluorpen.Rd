@@ -2,33 +2,28 @@
 % Please edit documentation in R/fluorpen_io.R
 \name{calc_fluorojip_fluorpen}
 \alias{calc_fluorojip_fluorpen}
-\title{Calculate FluorOJIP parameters from a FluorPen workbook}
+\title{Calculate JIP-test parameters from a FluorPen workbook}
 \usage{
-calc_fluorojip_fluorpen(file, sheet = 1)
+calc_fluorojip_fluorpen(file, sheet = 1, ...)
 }
 \arguments{
-\item{file}{Path to the FluorPen \code{.xlsx} file.}
+\item{file}{Path to the FluorPen workbook.}
 
-\item{sheet}{Sheet name or numeric index. Defaults to the first sheet.}
+\item{sheet}{Sheet name or index. Defaults to the first sheet.}
+
+\item{...}{Further arguments passed to \code{\link[=trace_to_ojip]{trace_to_ojip()}}.}
 }
 \value{
-A data frame with FluorOJIP / JIP-test parameters calculated from
-the imported workbook.
+The data frame returned by \code{\link[=calc_fluorojip]{calc_fluorojip()}}.
 }
 \description{
-Calculate FluorOJIP parameters from a FluorPen workbook
-}
-\details{
-This is a convenience wrapper for the typical FluorPen workflow:
-\code{read_fluorpen_xlsx(file) -> fluorpen_to_ojip(raw) -> calc_fluorojip(ojip)}.
-
-Use this function when you want to import a supported FluorPen workbook and
-compute JIP-test parameters in one step.
+Convenience wrapper:
+\code{read_fluorpen_xlsx() -> fluorpen_to_ojip() -> calc_fluorojip()}.
 }
 \examples{
 xlsx <- system.file("extdata", "FluorPen_test.xlsx", package = "fluorojip")
 if (nzchar(xlsx)) {
   res <- calc_fluorojip_fluorpen(xlsx)
-  head(res[c("sample_id", "Fv_Fm")])
+  head(res[, c("sample_id", "Fv_Fm", "PI_abs", "qc_flags")])
 }
 }
